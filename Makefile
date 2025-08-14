@@ -37,7 +37,6 @@ $(REQUIREMENTS):
 	@echo "rasterio>=1.3.0" > $(REQUIREMENTS)
 	@echo "numpy>=1.21.0" >> $(REQUIREMENTS)
 	@echo "Pillow>=9.0.0" >> $(REQUIREMENTS)
-	@echo "gdal>=3.4.0" >> $(REQUIREMENTS)
 	@echo "click>=8.0.0" >> $(REQUIREMENTS)
 
 directories: ## Create necessary directories
