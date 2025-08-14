@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Solarpunk Compare – Before/After Canvas Slider</title>
+	<meta name="description" content="A solarpunk-themed photo comparison feed with organic slider controls and accessible, responsive design." />
+	<meta name="theme-color" content="#2f7d4a" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Marcellus&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+	<header class="site-header">
+		<div class="brand">
+			<svg class="leafmark" width="28" height="28" viewBox="0 0 64 64" aria-hidden="true"><path fill="currentColor" d="M53 11C34 9 16 15 9 30c-5 10-3 21 6 25 6 3 13 1 18-3 7-6 10-15 9-23 3 2 7 3 11 2-3-9-8-15-0-20z"/></svg>
+			<strong>Solarpunk Compare</strong>
+		</div>
+		<nav class="top-nav" aria-label="Primary">
+			<a href="#feed" class="nav-link">Feed</a>
+			<a href="#about" class="nav-link">About</a>
+		</nav>
+	</header>
+
+	<main id="feed" class="feed" aria-live="polite">
+		<section class="intro card">
+			<h1>Before / After Photo Comparisons</h1>
+			<p>Drag the leaf to reveal each image. Crafted with a solarpunk aesthetic—organic shapes, earth tones, and gently flowing motion. Accessible by keyboard with the range inputs, and optimized for mobile and desktop.</p>
+		</section>
+
+		<!-- Comparison 1 -->
+		<section class="compare card" role="group" aria-label="Urban block transformed into a lush, solar-integrated eco district">
+			<header class="compare-head">
+				<h2>Urban Eco District</h2>
+				<p class="sub">Rooftop gardens, soft tech, and community orchards</p>
+			</header>
+			<div class="canvas-wrap" data-before="https://picsum.photos/id/1025/1600/900" data-after="https://picsum.photos/id/1043/1600/900" data-alt-before="A dense city block before greening" data-alt-after="The same city block transformed with rooftop gardens and solar pergolas">
+				<canvas class="compare-canvas" width="1280" height="720" aria-hidden="true"></canvas>
+				<input class="compare-range" type="range" min="0" max="100" value="50" step="0.1" aria-label="Reveal slider for Urban Eco District" />
+				<div class="handle" role="slider" aria-hidden="true"></div>
+				<div class="labels" aria-hidden="true">
+					<span class="tag tag-before">Before</span>
+					<span class="tag tag-after">After</span>
+				</div>
+			</div>
+			<figcaption class="caption">Canvas-based horizontal reveal. Images lazy-load as they enter the viewport.</figcaption>
+		</section>
+
+		<!-- Comparison 2 -->
+		<section class="compare card" role="group" aria-label="Agricultural robotics tending portable greenhouses in an open field">
+			<header class="compare-head">
+				<h2>Regenerative Agriculture</h2>
+				<p class="sub">Robotics assisting biodiverse farms</p>
+			</header>
+			<div class="canvas-wrap" data-before="https://picsum.photos/id/1069/1600/900" data-after="https://picsum.photos/id/1018/1600/900" data-alt-before="Conventional field before transformation" data-alt-after="Field revitalized with hedgerows and mobile greenhouses">
+				<canvas class="compare-canvas" width="1280" height="720" aria-hidden="true"></canvas>
+				<input class="compare-range" type="range" min="0" max="100" value="50" step="0.1" aria-label="Reveal slider for Regenerative Agriculture" />
+				<div class="handle" role="slider" aria-hidden="true"></div>
+				<div class="labels" aria-hidden="true">
+					<span class="tag tag-before">Before</span>
+					<span class="tag tag-after">After</span>
+				</div>
+			</div>
+			<figcaption class="caption">Drag or use keyboard arrows when the slider is focused. Double-tap the leaf handle on mobile to center.</figcaption>
+		</section>
+
+		<!-- Comparison 3 -->
+		<section class="compare card" role="group" aria-label="Countryside homestead augmented with aerostat turbines and pasture trees">
+			<header class="compare-head">
+				<h2>Pastoral Energy</h2>
+				<p class="sub">Gentle power integrated with landscape</p>
+			</header>
+			<div class="canvas-wrap" data-before="https://picsum.photos/id/1015/1600/900" data-after="https://picsum.photos/id/1005/1600/900" data-alt-before="Quiet countryside before upgrade" data-alt-after="Countryside with floating turbines and thriving hedges">
+				<canvas class="compare-canvas" width="1280" height="720" aria-hidden="true"></canvas>
+				<input class="compare-range" type="range" min="0" max="100" value="50" step="0.1" aria-label="Reveal slider for Pastoral Energy" />
+				<div class="handle" role="slider" aria-hidden="true"></div>
+				<div class="labels" aria-hidden="true">
+					<span class="tag tag-before">Before</span>
+					<span class="tag tag-after">After</span>
+				</div>
+			</div>
+			<figcaption class="caption">Smooth, organic motion and a warm, earthy palette evoke hopeful futures.</figcaption>
+		</section>
+
+		<section id="about" class="outro card">
+			<h2>About This Demo</h2>
+			<p>This is a lightweight, framework-free build that you can drop into any static host. Each comparison is rendered on a single <code>&lt;canvas&gt;</code> for performance, with intersection-based lazy loading and device-pixel-aware rendering for crisp visuals. Swap the <code>data-before</code> and <code>data-after</code> attributes with your own images.</p>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<p>Built with care for a brighter, greener web. <span aria-hidden="true">🌿</span></p>
+	</footer>
+
+	<script src="./app.js" defer></script>
+</body>
+</html>
