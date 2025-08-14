@@ -25,12 +25,12 @@ const sampleImagePairs: ImagePair[] = [
     title: 'Urban Transformation',
     description: 'From concrete jungle to green sanctuary - reimagining city spaces with vertical gardens and sustainable architecture.',
     beforeImage: {
-      src: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
+      src: '/images/urban/pawia.webp',
       alt: 'Urban cityscape with concrete buildings and pollution',
       label: 'Present Day'
     },
     afterImage: {
-      src: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&h=600&fit=crop',
+      src: '/images/urban/pawia-punk.webp',
       alt: 'Green urban landscape with vertical gardens and sustainable buildings',
       label: 'Solarpunk Future'
     }

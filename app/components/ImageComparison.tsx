@@ -17,6 +17,8 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   const [sliderPosition, setSliderPosition] = useState(50)
   const [isDragging, setIsDragging] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isBeforeDone, setIsBeforeDone] = useState(false)
+  const [isAfterDone, setIsAfterDone] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const beforeImageRef = useRef<HTMLImageElement>(null)
   const afterImageRef = useRef<HTMLImageElement>(null)
@@ -76,10 +78,28 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     }
   }, [handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd])
 
-  const handleImageLoad = useCallback(() => {
-    if (beforeImageRef.current?.complete && afterImageRef.current?.complete) {
+  const markBeforeDone = useCallback(() => {
+    setIsBeforeDone(true)
+  }, [])
+
+  const markAfterDone = useCallback(() => {
+    setIsAfterDone(true)
+  }, [])
+
+  useEffect(() => {
+    // Reveal as soon as either image is ready
+    if (isBeforeDone || isAfterDone) {
       setIsLoaded(true)
     }
+  }, [isBeforeDone, isAfterDone])
+
+  // Handle cached images and provide a short fallback timeout
+  useEffect(() => {
+    if (beforeImageRef.current?.complete) setIsBeforeDone(true)
+    if (afterImageRef.current?.complete) setIsAfterDone(true)
+
+    const fallback = setTimeout(() => setIsLoaded(true), 1200)
+    return () => clearTimeout(fallback)
   }, [])
 
   return (
@@ -95,7 +115,9 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
           ref={beforeImageRef}
           src={beforeImage.src}
           alt={beforeImage.alt}
-          onLoad={handleImageLoad}
+          onLoad={markBeforeDone}
+          onError={markBeforeDone}
+          loading="eager"
           draggable={false}
         />
         <div className="image-label before-label">
@@ -112,7 +134,9 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
           ref={afterImageRef}
           src={afterImage.src}
           alt={afterImage.alt}
-          onLoad={handleImageLoad}
+          onLoad={markAfterDone}
+          onError={markAfterDone}
+          loading="eager"
           draggable={false}
         />
         <div className="image-label after-label">
