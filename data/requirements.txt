@@ -1,0 +1,6 @@
+rasterio==1.3.10
+numpy==1.26.4
+gdal==3.8.4
+rio-cogeo==3.7.3
+pillow==10.4.0
+click==8.1.7

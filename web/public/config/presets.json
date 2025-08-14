@@ -1,0 +1,5 @@
+{
+	"A": { "solar": 0.25, "water": 0.25, "remoteness": 0.2, "population": 0.15, "flood": 0.15 },
+	"B": { "solar": 0.2,  "water": 0.4,  "remoteness": 0.15, "population": 0.1,  "flood": 0.15 },
+	"C": { "solar": 0.2,  "water": 0.2,  "remoteness": 0.35, "population": 0.15, "flood": 0.1 }
+}

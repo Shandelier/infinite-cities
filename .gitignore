@@ -1,0 +1,23 @@
+# Node
+node_modules/
+.next/
+out/
+web/.env.local
+web/.vercel/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Data
+/data/raw/
+/data/processed/
+/data/out/
+/data/tmp/
+
+# Editors
+.DS_Store
+.vscode/
+.idea/
