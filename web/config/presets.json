@@ -1,0 +1,40 @@
+{
+  "presets": {
+    "standard": {
+      "id": "A",
+      "name": "Standard",
+      "description": "Balanced weighting across all factors",
+      "weights": {
+        "solar": 0.25,
+        "water": 0.25,
+        "remoteness": 0.20,
+        "population": 0.15,
+        "flood": 0.15
+      }
+    },
+    "water_first": {
+      "id": "B", 
+      "name": "Water-first",
+      "description": "Prioritizes water availability",
+      "weights": {
+        "solar": 0.20,
+        "water": 0.40,
+        "remoteness": 0.15,
+        "population": 0.10,
+        "flood": 0.15
+      }
+    },
+    "remote_first": {
+      "id": "C",
+      "name": "Remote-first", 
+      "description": "Prioritizes remoteness from populated areas",
+      "weights": {
+        "solar": 0.20,
+        "water": 0.20,
+        "remoteness": 0.35,
+        "population": 0.15,
+        "flood": 0.10
+      }
+    }
+  }
+}
