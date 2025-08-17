@@ -40,12 +40,12 @@ const sampleImagePairs: ImagePair[] = [
     title: 'Energy Revolution',
     description: 'Transitioning from fossil fuel dependency to clean, renewable energy sources integrated harmoniously with nature.',
     beforeImage: {
-      src: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h=600&fit=crop',
+      src: '/images/urban/vegas1.jpg',
       alt: 'Industrial landscape with smokestacks and pollution',
       label: 'Industrial Age'
     },
     afterImage: {
-      src: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&h=600&fit=crop',
+      src: '/images/urban/vegas2.png',
       alt: 'Solar panels and wind turbines in a green landscape',
       label: 'Renewable Future'
     }
