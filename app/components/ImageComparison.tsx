@@ -20,39 +20,14 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   const [isBeforeDone, setIsBeforeDone] = useState(false)
   const [isAfterDone, setIsAfterDone] = useState(false)
   const [aspectRatio, setAspectRatio] = useState<number | null>(null)
-  const [containerHeight, setContainerHeight] = useState<number>(500) // Default fallback
   const containerRef = useRef<HTMLDivElement>(null)
   const beforeImageRef = useRef<HTMLImageElement>(null)
   const afterImageRef = useRef<HTMLImageElement>(null)
 
-  const getHeightConstraints = useCallback(() => {
-    const isMobile = window.innerWidth <= 480
-    const isTablet = window.innerWidth <= 768
-    
-    if (isMobile) {
-      return { minHeight: 200, maxHeight: 400 }
-    } else if (isTablet) {
-      return { minHeight: 250, maxHeight: 500 }
-    } else {
-      return { minHeight: 300, maxHeight: 800 }
-    }
-  }, [])
-
-  const calculateHeight = useCallback((aspectRatio: number, containerWidth: number) => {
-    const { minHeight, maxHeight } = getHeightConstraints()
-    return Math.max(minHeight, Math.min(maxHeight, containerWidth / aspectRatio))
-  }, [getHeightConstraints])
-
   const calculateDimensions = useCallback((img: HTMLImageElement) => {
-    if (!containerRef.current) return
-
-    const containerWidth = containerRef.current.offsetWidth
     const imageAspectRatio = img.naturalWidth / img.naturalHeight
-    const calculatedHeight = calculateHeight(imageAspectRatio, containerWidth)
-    
     setAspectRatio(imageAspectRatio)
-    setContainerHeight(calculatedHeight)
-  }, [calculateHeight])
+  }, [])
 
   const handleMove = useCallback((clientX: number) => {
     if (!containerRef.current) return
@@ -63,36 +38,23 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     setSliderPosition(percentage)
   }, [])
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
+  // Pointer events (mouse + touch) to avoid passive event issues
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
     setIsDragging(true)
+    const target = e.currentTarget as HTMLElement
+    try { target.setPointerCapture(e.pointerId) } catch {}
     handleMove(e.clientX)
   }, [handleMove])
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (!isDragging) return
-    e.preventDefault()
     handleMove(e.clientX)
   }, [isDragging, handleMove])
 
-  const handleMouseUp = useCallback(() => {
+  const handlePointerUp = useCallback((e: React.PointerEvent) => {
     setIsDragging(false)
-  }, [])
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-    handleMove(e.touches[0].clientX)
-  }, [handleMove])
-
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (!isDragging) return
-    e.preventDefault()
-    handleMove(e.touches[0].clientX)
-  }, [isDragging, handleMove])
-
-  const handleTouchEnd = useCallback(() => {
-    setIsDragging(false)
+    const target = e.currentTarget as HTMLElement
+    try { target.releasePointerCapture(e.pointerId) } catch {}
   }, [])
 
   const markBeforeDone = useCallback(() => {
@@ -109,38 +71,22 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     }
   }, [calculateDimensions, aspectRatio])
 
-  // Preload images to get dimensions early
+  // Preload images to get aspect ratio early
   useEffect(() => {
     const preloadImage = new Image()
     preloadImage.onload = () => {
       if (!aspectRatio && containerRef.current) {
-        const containerWidth = containerRef.current.offsetWidth
         const imageAspectRatio = preloadImage.naturalWidth / preloadImage.naturalHeight
-        const calculatedHeight = calculateHeight(imageAspectRatio, containerWidth)
-        
-        // Optional: Add console logging for debugging (remove in production)
-        console.log(`Image dimensions: ${preloadImage.naturalWidth}x${preloadImage.naturalHeight}, aspect ratio: ${imageAspectRatio.toFixed(2)}, calculated height: ${calculatedHeight}px`)
-        
+        // Optional: debug (can remove)
+        console.log(`Image dimensions: ${preloadImage.naturalWidth}x${preloadImage.naturalHeight}, aspect ratio: ${imageAspectRatio.toFixed(2)}`)
         setAspectRatio(imageAspectRatio)
-        setContainerHeight(calculatedHeight)
       }
     }
     preloadImage.src = beforeImage.src
-  }, [beforeImage.src, aspectRatio, calculateHeight])
+  }, [beforeImage.src, aspectRatio])
 
-  useEffect(() => {
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
-    document.addEventListener('touchmove', handleTouchMove, { passive: false })
-    document.addEventListener('touchend', handleTouchEnd)
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-      document.removeEventListener('touchmove', handleTouchMove)
-      document.removeEventListener('touchend', handleTouchEnd)
-    }
-  }, [handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd])
+  // No global listeners needed with pointer events
+  useEffect(() => {}, [])
 
   useEffect(() => {
     // Reveal as soon as either image is ready
@@ -168,27 +114,16 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     return () => clearTimeout(fallback)
   }, [calculateDimensions, aspectRatio])
 
-  // Handle window resize to recalculate dimensions
-  useEffect(() => {
-    const handleResize = () => {
-      if (aspectRatio && containerRef.current) {
-        const containerWidth = containerRef.current.offsetWidth
-        const calculatedHeight = calculateHeight(aspectRatio, containerWidth)
-        setContainerHeight(calculatedHeight)
-      }
-    }
-
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [aspectRatio, calculateHeight])
+  // No resize handler necessary with CSS aspect-ratio
 
   return (
     <div 
       ref={containerRef}
       className={`image-comparison-container ${isLoaded ? 'loaded' : ''} ${isDragging ? 'dragging' : ''}`}
-      style={{ height: `${containerHeight}px` }}
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
+      style={{ aspectRatio: aspectRatio ?? undefined, maxHeight: '80vh', minHeight: '180px' }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
     >
       {/* Before Image */}
       <div className="image-wrapper before-image">

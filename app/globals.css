@@ -300,6 +300,7 @@ body {
   background: var(--stone-gray);
   user-select: none;
   transition: height var(--transition-medium), box-shadow var(--transition-medium), transform var(--transition-medium);
+  touch-action: none; /* allow pointer events to manage pan */
 }
 
 .image-comparison-container:hover {
@@ -321,7 +322,7 @@ body {
 .image-wrapper img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
   user-select: none;
   pointer-events: none;
