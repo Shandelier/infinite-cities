@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import * as THREE from 'three'
 
 const Globe = dynamic(() => import('react-globe.gl'), { ssr: false })
 
@@ -41,6 +42,50 @@ export default function GlobePage() {
   useEffect(() => {
     if (!isMounted || !globeRef.current) return
     globeRef.current.pointOfView({ lat: 30, lng: 10, altitude: 2.2 }, 1500)
+    // Enable a gentle auto-rotation
+    const controls = globeRef.current.controls()
+    if (controls) {
+      controls.autoRotate = true
+      controls.autoRotateSpeed = 0.35
+    }
+  }, [isMounted])
+
+  // Add semi-transparent clouds layer
+  useEffect(() => {
+    if (!isMounted || !globeRef.current) return
+    const globe = globeRef.current
+    const CLOUDS_IMG_URL = 'https://unpkg.com/three-globe/example/img/clouds.png'
+    const CLOUDS_ALT = 0.004
+    const CLOUDS_ROTATION_SPEED = -0.006 // deg/frame
+
+    let animationFrameId = 0
+    let cloudsMesh: THREE.Mesh | null = null
+
+    const loader = new THREE.TextureLoader()
+    loader.load(CLOUDS_IMG_URL, (cloudsTexture) => {
+      cloudsMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(globe.getGlobeRadius() * (1 + CLOUDS_ALT), 75, 75),
+        new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
+      )
+      globe.scene().add(cloudsMesh)
+
+      const rotateClouds = () => {
+        if (cloudsMesh) {
+          cloudsMesh.rotation.y += (CLOUDS_ROTATION_SPEED * Math.PI) / 180
+        }
+        animationFrameId = requestAnimationFrame(rotateClouds)
+      }
+      rotateClouds()
+    })
+
+    return () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId)
+      if (cloudsMesh) {
+        try {
+          globe.scene().remove(cloudsMesh)
+        } catch {}
+      }
+    }
   }, [isMounted])
 
   const handleBackgroundClick = () => setIsModalOpen(false)
