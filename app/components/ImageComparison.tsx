@@ -19,9 +19,40 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   const [isLoaded, setIsLoaded] = useState(false)
   const [isBeforeDone, setIsBeforeDone] = useState(false)
   const [isAfterDone, setIsAfterDone] = useState(false)
+  const [aspectRatio, setAspectRatio] = useState<number | null>(null)
+  const [containerHeight, setContainerHeight] = useState<number>(500) // Default fallback
   const containerRef = useRef<HTMLDivElement>(null)
   const beforeImageRef = useRef<HTMLImageElement>(null)
   const afterImageRef = useRef<HTMLImageElement>(null)
+
+  const getHeightConstraints = useCallback(() => {
+    const isMobile = window.innerWidth <= 480
+    const isTablet = window.innerWidth <= 768
+    
+    if (isMobile) {
+      return { minHeight: 200, maxHeight: 400 }
+    } else if (isTablet) {
+      return { minHeight: 250, maxHeight: 500 }
+    } else {
+      return { minHeight: 300, maxHeight: 800 }
+    }
+  }, [])
+
+  const calculateHeight = useCallback((aspectRatio: number, containerWidth: number) => {
+    const { minHeight, maxHeight } = getHeightConstraints()
+    return Math.max(minHeight, Math.min(maxHeight, containerWidth / aspectRatio))
+  }, [getHeightConstraints])
+
+  const calculateDimensions = useCallback((img: HTMLImageElement) => {
+    if (!containerRef.current) return
+
+    const containerWidth = containerRef.current.offsetWidth
+    const imageAspectRatio = img.naturalWidth / img.naturalHeight
+    const calculatedHeight = calculateHeight(imageAspectRatio, containerWidth)
+    
+    setAspectRatio(imageAspectRatio)
+    setContainerHeight(calculatedHeight)
+  }, [calculateHeight])
 
   const handleMove = useCallback((clientX: number) => {
     if (!containerRef.current) return
@@ -64,6 +95,39 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     setIsDragging(false)
   }, [])
 
+  const markBeforeDone = useCallback(() => {
+    setIsBeforeDone(true)
+    if (beforeImageRef.current && !aspectRatio) {
+      calculateDimensions(beforeImageRef.current)
+    }
+  }, [calculateDimensions, aspectRatio])
+
+  const markAfterDone = useCallback(() => {
+    setIsAfterDone(true)
+    if (afterImageRef.current && !aspectRatio) {
+      calculateDimensions(afterImageRef.current)
+    }
+  }, [calculateDimensions, aspectRatio])
+
+  // Preload images to get dimensions early
+  useEffect(() => {
+    const preloadImage = new Image()
+    preloadImage.onload = () => {
+      if (!aspectRatio && containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth
+        const imageAspectRatio = preloadImage.naturalWidth / preloadImage.naturalHeight
+        const calculatedHeight = calculateHeight(imageAspectRatio, containerWidth)
+        
+        // Optional: Add console logging for debugging (remove in production)
+        console.log(`Image dimensions: ${preloadImage.naturalWidth}x${preloadImage.naturalHeight}, aspect ratio: ${imageAspectRatio.toFixed(2)}, calculated height: ${calculatedHeight}px`)
+        
+        setAspectRatio(imageAspectRatio)
+        setContainerHeight(calculatedHeight)
+      }
+    }
+    preloadImage.src = beforeImage.src
+  }, [beforeImage.src, aspectRatio, calculateHeight])
+
   useEffect(() => {
     document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseup', handleMouseUp)
@@ -78,14 +142,6 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     }
   }, [handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd])
 
-  const markBeforeDone = useCallback(() => {
-    setIsBeforeDone(true)
-  }, [])
-
-  const markAfterDone = useCallback(() => {
-    setIsAfterDone(true)
-  }, [])
-
   useEffect(() => {
     // Reveal as soon as either image is ready
     if (isBeforeDone || isAfterDone) {
@@ -95,17 +151,42 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
 
   // Handle cached images and provide a short fallback timeout
   useEffect(() => {
-    if (beforeImageRef.current?.complete) setIsBeforeDone(true)
-    if (afterImageRef.current?.complete) setIsAfterDone(true)
+    if (beforeImageRef.current?.complete) {
+      setIsBeforeDone(true)
+      if (!aspectRatio) {
+        calculateDimensions(beforeImageRef.current)
+      }
+    }
+    if (afterImageRef.current?.complete) {
+      setIsAfterDone(true)
+      if (!aspectRatio) {
+        calculateDimensions(afterImageRef.current)
+      }
+    }
 
     const fallback = setTimeout(() => setIsLoaded(true), 1200)
     return () => clearTimeout(fallback)
-  }, [])
+  }, [calculateDimensions, aspectRatio])
+
+  // Handle window resize to recalculate dimensions
+  useEffect(() => {
+    const handleResize = () => {
+      if (aspectRatio && containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth
+        const calculatedHeight = calculateHeight(aspectRatio, containerWidth)
+        setContainerHeight(calculatedHeight)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [aspectRatio, calculateHeight])
 
   return (
     <div 
       ref={containerRef}
       className={`image-comparison-container ${isLoaded ? 'loaded' : ''} ${isDragging ? 'dragging' : ''}`}
+      style={{ height: `${containerHeight}px` }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
     >

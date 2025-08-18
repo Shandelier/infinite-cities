@@ -81,7 +81,7 @@ export default function Home() {
         <div className="intro-content">
           <h2 className="intro-title">Envisioning Tomorrow</h2>
           <p className="intro-text">
-            Explore the transformation from our current world to a sustainable, 
+            PLACEHOLDER: Explore the transformation from our current world to a sustainable, 
             equitable solarpunk future. Drag the slider to reveal possibilities 
             where technology and nature exist in harmony.
           </p>
