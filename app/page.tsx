@@ -25,12 +25,12 @@ const sampleImagePairs: ImagePair[] = [
     title: 'Urban Transformation',
     description: 'From concrete jungle to green sanctuary - reimagining city spaces with vertical gardens and sustainable architecture.',
     beforeImage: {
-      src: '/images/urban/pawia.webp',
+      src: '/images/urban/bellagio.png',
       alt: 'Urban cityscape with concrete buildings and pollution',
       label: 'Present Day'
     },
     afterImage: {
-      src: '/images/urban/pawia-punk.webp',
+      src: '/images/urban/bellagio2.png',
       alt: 'Green urban landscape with vertical gardens and sustainable buildings',
       label: 'Solarpunk Future'
     }
@@ -55,31 +55,17 @@ const sampleImagePairs: ImagePair[] = [
     title: 'Transportation Evolution',
     description: 'Moving from car-dependent infrastructure to sustainable, community-focused transportation systems.',
     beforeImage: {
-      src: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
+      src: '/images/urban/eifel.webp',
       alt: 'Highway filled with cars and traffic',
       label: 'Car-Centric'
     },
     afterImage: {
-      src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
+      src: '/images/urban/eifel2.png',
       alt: 'Bike lanes and green transportation corridors',
       label: 'Sustainable Mobility'
     }
   },
-  {
-    id: '4',
-    title: 'Agricultural Renaissance',
-    description: 'Transforming industrial monoculture into diverse, regenerative farming systems that work with nature.',
-    beforeImage: {
-      src: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&h=600&fit=crop',
-      alt: 'Industrial monoculture farm with heavy machinery',
-      label: 'Industrial Farming'
-    },
-    afterImage: {
-      src: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&h=600&fit=crop',
-      alt: 'Permaculture garden with diverse plants and sustainable practices',
-      label: 'Regenerative Agriculture'
-    }
-  }
+
 ]
 
 export default function Home() {
