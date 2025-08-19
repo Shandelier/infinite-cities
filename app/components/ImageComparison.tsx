@@ -14,7 +14,7 @@ interface ImageComparisonProps {
 }
 
 export default function ImageComparison({ beforeImage, afterImage }: ImageComparisonProps) {
-  const [sliderPosition, setSliderPosition] = useState(50)
+  const [sliderPosition, setSliderPosition] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isBeforeDone, setIsBeforeDone] = useState(false)
@@ -23,6 +23,7 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   const containerRef = useRef<HTMLDivElement>(null)
   const beforeImageRef = useRef<HTMLImageElement>(null)
   const afterImageRef = useRef<HTMLImageElement>(null)
+  const animationRef = useRef<number | null>(null)
 
   const calculateDimensions = useCallback((img: HTMLImageElement) => {
     const imageAspectRatio = img.naturalWidth / img.naturalHeight
@@ -41,6 +42,9 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   // Pointer events (mouse + touch) to avoid passive event issues
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     setIsDragging(true)
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current)
+    }
     const target = e.currentTarget as HTMLElement
     try { target.setPointerCapture(e.pointerId) } catch {}
     handleMove(e.clientX)
@@ -113,6 +117,27 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     const fallback = setTimeout(() => setIsLoaded(true), 1200)
     return () => clearTimeout(fallback)
   }, [calculateDimensions, aspectRatio])
+
+  useEffect(() => {
+    setSliderPosition(0)
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current)
+    }
+    const duration = 2000
+    let start: number | null = null
+    const animate = (timestamp: number) => {
+      if (start === null) start = timestamp
+      const progress = Math.min((timestamp - start) / duration, 1)
+      setSliderPosition(progress * 100)
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate)
+      }
+    }
+    animationRef.current = requestAnimationFrame(animate)
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current)
+    }
+  }, [beforeImage.src, afterImage.src])
 
   // No resize handler necessary with CSS aspect-ratio
 
