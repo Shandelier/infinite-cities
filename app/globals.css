@@ -672,3 +672,15 @@ body {
     background: rgba(26, 26, 26, 0.9);
   }
 }
+
+/* Globe labels with frosted glass effect */
+.globe-label {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 6px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px) saturate(180%);
+  color: #fff;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+}

@@ -165,11 +165,48 @@ export default function Home() {
               backgroundColor="rgba(0, 0, 0, 0)"
               globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
               bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
+              // hide default points but keep click/hover events
               pointsData={locations}
-              pointAltitude={() => 0.12}
-              pointColor={(p: any) => (p as LocationPoint).color || '#ff8c00'}
-              pointRadius={(p: any) => (p as LocationPoint).size || 0.3}
+              pointAltitude={() => 0.0}
+              pointColor={() => 'rgba(0,0,0,0)'}
+              pointRadius={() => 0.2}
               onPointClick={(p) => setSelectedLocation(p as LocationPoint)}
+              // futuristic pulsing dots
+              customLayerData={locations}
+              customThreeObject={(d) => {
+                const color = (d as LocationPoint).color || '#ff8c00'
+                return new THREE.Mesh(
+                  new THREE.SphereGeometry(0.15, 16, 16),
+                  new THREE.MeshStandardMaterial({
+                    color,
+                    emissive: color,
+                    transparent: true,
+                    opacity: 0.8,
+                  })
+                )
+              }}
+              customThreeObjectUpdate={(obj, d) => {
+                const globe = globeRef.current
+                if (!globe) return
+                const { lat, lng } = d as LocationPoint
+                const { x, y, z } = globe.getCoords(lat, lng, 0.12)
+                obj.position.set(x, y, z)
+                const t = Date.now() * 0.002
+                const scale = 0.8 + 0.3 * Math.sin(t)
+                obj.scale.set(scale, scale, scale)
+                const mat = obj.material as THREE.MeshStandardMaterial
+                mat.opacity = 0.6 + 0.4 * (Math.sin(t) + 1) / 2
+              }}
+              // always-visible labels
+              labelsData={locations}
+              labelLat={(d: any) => (d as LocationPoint).lat}
+              labelLng={(d: any) => (d as LocationPoint).lng}
+              labelText={(d: any) => (d as LocationPoint).name}
+              labelAltitude={0.015}
+              labelSize={1.2}
+              labelColor={() => 'rgba(255,255,255,0.9)'}
+              labelDotRadius={0}
+              labelClass={() => 'globe-label'}
             />
           </Suspense>
         )}
@@ -191,16 +228,18 @@ export default function Home() {
           <div
             onClick={stopPropagation}
             style={{
-              background: 'white',
-              color: '#111',
+              background: 'rgba(255,255,255,0.15)',
+              backdropFilter: 'blur(12px) saturate(180%)',
+              color: '#fff',
               borderRadius: 12,
+              border: '1px solid rgba(255,255,255,0.3)',
               boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
               width: 'min(90vw, 560px)',
               padding: 24,
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <h2 style={{ fontSize: 20, margin: 0 }}>{selectedLocation.name}</h2>
+              <h2 style={{ fontSize: 20, margin: 0, color: '#fff' }}>{selectedLocation.name}</h2>
               <button
                 onClick={() => setSelectedLocation(null)}
                 style={{
@@ -209,6 +248,7 @@ export default function Home() {
                   fontSize: 22,
                   lineHeight: 1,
                   cursor: 'pointer',
+                  color: '#fff',
                 }}
                 aria-label="Close"
               >
