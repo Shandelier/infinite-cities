@@ -143,9 +143,135 @@ body {
   opacity: 0.8;
 }
 
+/* Navigation */
+.nav-links {
+  margin-top: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+}
+
+.nav-link {
+  color: var(--forest-green);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.nav-link:hover {
+  background: var(--leaf-green);
+  color: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
 /* Main Content */
 .main-content {
   position: relative;
+}
+
+/* Globe Page */
+.globe-page {
+  position: relative;
+  min-height: calc(100vh - 120px);
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 120%, #0b1d33 0%, #000 80%);
+}
+
+.globe-background {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(#ffffff 1px, transparent 1px) 0 0 / 3px 3px;
+  animation: star-scroll 60s linear infinite;
+  opacity: 0.35;
+  z-index: 0;
+}
+
+@keyframes star-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-500px);
+  }
+}
+
+.globe-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn var(--transition-medium);
+  z-index: 50;
+}
+
+.modal-content {
+  background: var(--warm-white);
+  color: var(--charcoal);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-strong);
+  width: min(90vw, 560px);
+  padding: var(--spacing-lg);
+  animation: slideUp var(--transition-medium);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.modal-close {
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.modal-close:hover {
+  background: var(--soft-gray);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .page-container {
