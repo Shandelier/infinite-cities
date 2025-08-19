@@ -21,18 +21,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <div className="app-container">
-          <header className="site-header">
-            <div className="header-content">
-              <h1 className="site-title">
-                <span className="leaf-icon">🌿</span>
-                Solar Explorer
-              </h1>
-              <p className="site-subtitle">Interactive solarpunk voyages</p>
-            </div>
-          </header>
-          <main className="main-content">
-            {children}
-          </main>
+          <main className="main-content">{children}</main>
         </div>
       </body>
     </html>

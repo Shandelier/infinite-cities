@@ -64,15 +64,6 @@ export default function Home() {
         afterImage: placeholderAfter,
       },
       {
-        name: 'Barcelona, Spain',
-        lat: 41.3851,
-        lng: 2.1734,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
         name: 'Shanghai, China',
         lat: 31.2304,
         lng: 121.4737,
@@ -145,15 +136,6 @@ export default function Home() {
         afterImage: placeholderAfter,
       },
       {
-        name: 'Rome, Italy',
-        lat: 41.9028,
-        lng: 12.4964,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
         name: 'Warsaw, Poland',
         lat: 52.2297,
         lng: 21.0122,
@@ -207,21 +189,15 @@ export default function Home() {
         beforeImage: placeholderBefore,
         afterImage: placeholderAfter,
       },
-      {
-        name: 'Zurich, Switzerland',
-        lat: 47.3769,
-        lng: 8.5417,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
     ],
     []
   )
 
   const selectedLocation =
     selectedIndex !== null ? locations[selectedIndex] : null
+
+  const isDesktop = viewport.width >= 1024
+  const globeWidth = isDesktop && selectedLocation ? viewport.width * 0.6 : viewport.width
 
   const handlePrev = () => {
     if (selectedIndex === null) return
@@ -267,6 +243,21 @@ export default function Home() {
       canceled = true
     }
   }, [isMounted])
+
+  useEffect(() => {
+    if (!isMounted) return
+    const globe = globeRef.current
+    if (!globe) return
+    const controls = globe.controls()
+    if (selectedIndex !== null) {
+      const loc = locations[selectedIndex]
+      if (controls) controls.autoRotate = false
+      globe.pointOfView({ lat: loc.lat, lng: loc.lng, altitude: 1.4 }, 1000)
+    } else {
+      if (controls) controls.autoRotate = true
+      globe.pointOfView({ lat: 30, lng: 10, altitude: 2.2 }, 1500)
+    }
+  }, [selectedIndex, isMounted, locations])
 
   // Add semi-transparent clouds layer
   useEffect(() => {
@@ -321,14 +312,138 @@ export default function Home() {
   const handleBackgroundClick = () => setSelectedIndex(null)
   const stopPropagation: React.MouseEventHandler<HTMLDivElement> = (e) => e.stopPropagation()
 
+  const cardContent = selectedLocation ? (
+    <div
+      style={{
+        background: 'rgba(255,255,255,0.9)',
+        color: '#1a1a1a',
+        borderRadius: 20,
+        boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255,255,255,0.8)',
+        width: isDesktop ? 'min(95%, 700px)' : 'min(90vw, 700px)',
+        padding: 32,
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <h2 style={{ fontSize: 24, margin: 0 }}>{selectedLocation.name}</h2>
+        <button
+          onClick={() => setSelectedIndex(null)}
+          style={{
+            border: 'none',
+            background: 'transparent',
+            fontSize: 24,
+            lineHeight: 1,
+            cursor: 'pointer',
+            color: '#264653',
+          }}
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </div>
+      <ImageComparison
+        beforeImage={selectedLocation.beforeImage}
+        afterImage={selectedLocation.afterImage}
+      />
+      <div style={{ marginTop: 24 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            color: '#264653',
+          }}
+        >
+          <button
+            onClick={handlePrev}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              color: '#264653',
+              fontSize: 28,
+              cursor: 'pointer',
+            }}
+            aria-label="Previous city"
+          >
+            ←
+          </button>
+          <div style={{ flex: 1, textAlign: 'center', fontWeight: 500 }}>{selectedLocation.name}</div>
+          <button
+            onClick={handleNext}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              color: '#264653',
+              fontSize: 28,
+              cursor: 'pointer',
+            }}
+            aria-label="Next city"
+          >
+            →
+          </button>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: 12,
+          }}
+        >
+          {locations.map((_, idx) => (
+            <span
+              key={idx}
+              onClick={() => setSelectedIndex(idx)}
+              style={{
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                margin: '0 6px',
+                background: idx === selectedIndex ? '#264653' : 'rgba(0,0,0,0.2)',
+                cursor: 'pointer',
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  ) : null
+
   return (
-    <div style={{ position: 'relative' }}>
-      <div style={{ width: '100%', height: viewport.height }}>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: viewport.height,
+        display: isDesktop && selectedLocation ? 'flex' : 'block',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {isDesktop && selectedLocation && (
+        <div
+          style={{
+            flex: '0 0 45%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 32,
+          }}
+        >
+          {cardContent}
+        </div>
+      )}
+      <div
+        style={{
+          flex: isDesktop && selectedLocation ? '0 0 55%' : '1 0 100%',
+          height: viewport.height,
+        }}
+      >
         {isMounted && (
           <Suspense fallback={null}>
             <Globe
               ref={globeRef}
-              width={viewport.width}
+              width={globeWidth}
               height={viewport.height}
               backgroundColor="rgba(0, 0, 0, 0)"
               globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
@@ -337,21 +452,20 @@ export default function Home() {
               htmlLat={(p: any) => (p as LocationPoint).lat}
               htmlLng={(p: any) => (p as LocationPoint).lng}
               htmlAltitude={() => 0.01}
-                htmlElement={(p: any) => {
-                  const el = document.createElement('div')
-                  const color = (p as LocationPoint).color || '#ffa500'
-                  el.className = 'globe-marker'
-                  el.innerHTML = `<div class="pulse-dot" style="--dot-color:${color}"></div><div class="label">${(p as LocationPoint).name}</div>`
-                  el.style.pointerEvents = 'auto'
-                  el.onclick = () => setSelectedIndex(locations.indexOf(p as LocationPoint))
-                  return el
-                }}
-              />
-            </Suspense>
-          )}
-        </div>
-
-      {selectedLocation && (
+              htmlElement={(p: any) => {
+                const el = document.createElement('div')
+                const color = (p as LocationPoint).color || '#ffa500'
+                el.className = 'globe-marker'
+                el.innerHTML = `<div class="pulse-dot" style="--dot-color:${color}"></div><div class="label">${(p as LocationPoint).name}</div>`
+                el.style.pointerEvents = 'auto'
+                el.onclick = () => setSelectedIndex(locations.indexOf(p as LocationPoint))
+                return el
+              }}
+            />
+          </Suspense>
+        )}
+      </div>
+      {!isDesktop && selectedLocation && (
         <div
           onClick={handleBackgroundClick}
           style={{
@@ -364,104 +478,10 @@ export default function Home() {
             zIndex: 50,
           }}
         >
-          <div
-            onClick={stopPropagation}
-            style={{
-              background: 'rgba(255,255,255,0.25)',
-              color: '#e0f7ff',
-              borderRadius: 16,
-              boxShadow: '0 10px 40px rgba(0,255,242,0.2)',
-              backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(255,255,255,0.3)',
-                width: 'min(90vw, 700px)',
-                padding: 24,
-              }}
-            >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <h2 style={{ fontSize: 20, margin: 0 }}>{selectedLocation.name}</h2>
-                <button
-                  onClick={() => setSelectedIndex(null)}
-                  style={{
-                    border: 'none',
-                    background: 'transparent',
-                    fontSize: 22,
-                    lineHeight: 1,
-                  cursor: 'pointer',
-                  color: '#fff',
-                }}
-                aria-label="Close"
-              >
-                ×
-              </button>
-            </div>
-              <ImageComparison
-                beforeImage={selectedLocation.beforeImage}
-                afterImage={selectedLocation.afterImage}
-              />
-              <div style={{ marginTop: 16 }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    color: '#fff',
-                  }}
-                >
-                  <button
-                    onClick={handlePrev}
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      color: '#fff',
-                      fontSize: 24,
-                      cursor: 'pointer',
-                    }}
-                    aria-label="Previous city"
-                  >
-                    ←
-                  </button>
-                  <div style={{ flex: 1, textAlign: 'center' }}>{selectedLocation.name}</div>
-                  <button
-                    onClick={handleNext}
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      color: '#fff',
-                      fontSize: 24,
-                      cursor: 'pointer',
-                    }}
-                    aria-label="Next city"
-                  >
-                    →
-                  </button>
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    marginTop: 8,
-                  }}
-                >
-                  {locations.map((_, idx) => (
-                    <span
-                      key={idx}
-                      onClick={() => setSelectedIndex(idx)}
-                      style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        margin: '0 4px',
-                        background: idx === selectedIndex ? '#fff' : 'rgba(255,255,255,0.4)',
-                        cursor: 'pointer',
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
+          <div onClick={stopPropagation}>{cardContent}</div>
+        </div>
+      )}
+    </div>
+  )
+}
 
