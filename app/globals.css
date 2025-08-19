@@ -101,48 +101,6 @@ body {
   z-index: -1;
 }
 
-/* Header Styles */
-.site-header {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(135, 169, 107, 0.2);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  padding: var(--spacing-md) 0;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
-  text-align: center;
-}
-
-.site-title {
-  font-family: var(--font-display);
-  font-size: 2.5rem;
-  font-weight: 600;
-  color: var(--forest-green);
-  margin-bottom: var(--spacing-xs);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-sm);
-}
-
-.leaf-icon {
-  font-size: 2rem;
-  animation: gentle-sway 3s ease-in-out infinite;
-}
-
-.site-subtitle {
-  font-size: 1.1rem;
-  color: var(--moss-green);
-  font-weight: 400;
-  opacity: 0.8;
-}
-
 /* Main Content */
 .main-content {
   position: relative;
@@ -586,10 +544,6 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .site-title {
-    font-size: 2rem;
-  }
-  
   .intro-title {
     font-size: 2.2rem;
   }
@@ -629,10 +583,6 @@ body {
     --spacing-lg: 1.5rem;
     --spacing-xl: 2rem;
     --spacing-2xl: 2.5rem;
-  }
-  
-  .site-title {
-    font-size: 1.8rem;
   }
   
   .intro-title {
@@ -724,7 +674,4 @@ body {
     border-color: rgba(167, 201, 87, 0.3);
   }
   
-  .site-header {
-    background: rgba(26, 26, 26, 0.9);
-  }
 }
