@@ -1,21 +1,12 @@
 'use client'
 
-import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import React, { Suspense, useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import type { GlobeMethods } from 'react-globe.gl'
 import ImageComparison from './components/ImageComparison'
+import locations, { LocationPoint } from './data/locations'
 
 const Globe = React.lazy(() => import('react-globe.gl'))
-
-interface LocationPoint {
-  lat: number
-  lng: number
-  size?: number
-  color?: string
-  name: string
-  beforeImage: { src: string; alt: string; label: string }
-  afterImage: { src: string; alt: string; label: string }
-}
 
 export default function Home() {
   const globeRef = useRef<GlobeMethods | undefined>(undefined)
@@ -23,119 +14,6 @@ export default function Home() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [viewport, setViewport] = useState<{ width: number; height: number }>({ width: 0, height: 0 })
   const [globeVisible, setGlobeVisible] = useState(false)
-
-  const placeholderBefore = {
-    src: '/images/urban/pawia.webp',
-    alt: 'Placeholder before',
-    label: 'Today',
-  }
-  const placeholderAfter = {
-    src: '/images/urban/pawia-punk.webp',
-    alt: 'Placeholder future',
-    label: 'Future',
-  }
-  const cityImages: Record<string, { before: string; after?: string }> = {
-    'Bellagio, Italy': {
-      before: '/images/urban/bellagio.png',
-      after: '/images/urban/bellagio2.png',
-    },
-    'New York, USA': {
-      before: '/images/urban/newyork1.jpg',
-      after: '/images/urban/newyork2.jpg',
-    },
-    'Paris, France': {
-      before: '/images/urban/paris1.webp',
-      after: '/images/urban/paris2.png',
-    },
-    'London, UK': {
-      before: '/images/urban/london1.jpeg',
-    },
-    'Las Vegas, USA': {
-      before: '/images/urban/vegas1.jpg',
-      after: '/images/urban/vegas2.png',
-    },
-    'Shanghai, China': {
-      before: '/images/urban/shanghai-rails1.jpg',
-      after: '/images/urban/shanghai-rails2.png',
-    },
-    'Tokyo, Japan': {
-      before: '/images/urban/tokyo1.jpg',
-    },
-    'Singapore, Singapore': {
-      before: '/images/urban/singapore1.jpg',
-    },
-    'São Paulo, Brazil': {
-      before: '/images/urban/saopaulo1.jpeg',
-    },
-    'Mexico City, Mexico': {
-      before: '/images/urban/mexico1.jpeg',
-    },
-    'Istanbul, Turkey': {
-      before: '/images/urban/istanbul1.jpeg',
-    },
-    'Saint Petersburg, Russia': {
-      before: '/images/urban/saintpetersburg1.jpg',
-    },
-    'Warsaw, Poland': {
-      before: '/images/urban/warsaw1.jpeg',
-    },
-    'New Delhi, India': {
-      before: '/images/urban/newdelhi1.jpg',
-    },
-    'Seoul, South Korea': {
-      before: '/images/urban/seoul1.jpg',
-    },
-    'Sydney, Australia': {
-      before: '/images/urban/sydney1.jpeg',
-    },
-    'Buenos Aires, Argentina': {
-      before: '/images/urban/buenosaires1.jpg',
-    },
-    'Lisbon, Portugal': {
-      before: '/images/urban/lisbon1.jpg',
-    },
-  }
-
-  const baseLocations = [
-    { name: 'Bellagio, Italy', lat: 45.9877, lng: 9.2616 },
-    { name: 'New York, USA', lat: 40.7128, lng: -74.006 },
-    { name: 'Paris, France', lat: 48.8566, lng: 2.3522 },
-    { name: 'London, UK', lat: 51.5074, lng: -0.1278 },
-    { name: 'Las Vegas, USA', lat: 36.1699, lng: -115.1398 },
-    { name: 'Shanghai, China', lat: 31.2304, lng: 121.4737 },
-    { name: 'Tokyo, Japan', lat: 35.6762, lng: 139.6503 },
-    { name: 'Singapore, Singapore', lat: 1.3521, lng: 103.8198 },
-    { name: 'São Paulo, Brazil', lat: -23.5505, lng: -46.6333 },
-    { name: 'Mexico City, Mexico', lat: 19.4326, lng: -99.1332 },
-    { name: 'Istanbul, Turkey', lat: 41.0082, lng: 28.9784 },
-    { name: 'Saint Petersburg, Russia', lat: 59.9311, lng: 30.3609 },
-    { name: 'Dubai, United Arab Emirates', lat: 25.2048, lng: 55.2708 },
-    { name: 'Warsaw, Poland', lat: 52.2297, lng: 21.0122 },
-    { name: 'New Delhi, India', lat: 28.6139, lng: 77.209 },
-    { name: 'Seoul, South Korea', lat: 37.5665, lng: 126.978 },
-    { name: 'Sydney, Australia', lat: -33.8688, lng: 151.2093 },
-    { name: 'Buenos Aires, Argentina', lat: -34.6037, lng: -58.3816 },
-    { name: 'Lisbon, Portugal', lat: 38.7223, lng: -9.1393 },
-  ]
-
-  const locations: LocationPoint[] = useMemo(
-    () =>
-      baseLocations.map((loc) => {
-        const images = cityImages[loc.name]
-        return {
-          ...loc,
-          size: 0.35,
-          color: '#ffa500',
-          beforeImage: images?.before
-            ? { src: images.before, alt: `${loc.name} today`, label: 'Today' }
-            : placeholderBefore,
-          afterImage: images?.after
-            ? { src: images.after, alt: `${loc.name} future`, label: 'Future' }
-            : placeholderAfter,
-        }
-      }),
-    [placeholderBefore, placeholderAfter]
-  )
 
   const selectedLocation =
     selectedIndex !== null ? locations[selectedIndex] : null
