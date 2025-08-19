@@ -2,9 +2,10 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Solarpunk Photo Comparison',
-  description: 'A nature-inspired photo comparison tool showcasing sustainable futures',
-  keywords: 'solarpunk, photo comparison, sustainability, eco-friendly, nature',
+  title: 'Solar Explorer',
+  description:
+    'An interactive app for checking how various places would look like when through mastering material science and sustainable energy we entered solarpunk.',
+  keywords: 'solarpunk, photo comparison, sustainability, eco-friendly, solar explorer',
 }
 
 export default function RootLayout({
@@ -25,9 +26,12 @@ export default function RootLayout({
             <div className="header-content">
               <h1 className="site-title">
                 <span className="leaf-icon">🌿</span>
-                Solarpunk Visions
+                Solar Explorer
               </h1>
-              <p className="site-subtitle">Comparing worlds: present and sustainable future</p>
+              <p className="site-subtitle">
+                An interactive app for checking how various places would look like when through mastering material science and
+                sustainable energy we entered solarpunk.
+              </p>
             </div>
           </header>
           <main className="main-content">
