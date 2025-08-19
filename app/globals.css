@@ -476,6 +476,122 @@ body {
   animation: pulse 2s ease-in-out infinite;
 }
 
+/* Globe Page Enhancements */
+.globe-page {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #001d3d 0%, #000 80%);
+}
+
+.globe-stars {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(white 1px, transparent 1px), radial-gradient(white 1px, transparent 1px);
+  background-size: 3px 3px, 2px 2px;
+  background-position: 0 0, 40px 40px;
+  animation: star-scroll 60s linear infinite;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes star-scroll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-1000px); }
+}
+
+.globe-marker {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.marker-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  background: var(--sun-yellow);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(241, 196, 15, 0.9), 0 0 20px rgba(241, 196, 15, 0.6);
+}
+
+.marker-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 2px solid rgba(241, 196, 15, 0.5);
+  border-radius: 50%;
+  animation: marker-pulse 2s infinite;
+}
+
+@keyframes marker-pulse {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(2.5); opacity: 0; }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fadeIn var(--transition-medium);
+}
+
+.modal-content {
+  background: white;
+  color: #111;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: min(90vw, 560px);
+  padding: 24px;
+  animation: slideUp var(--transition-medium);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.modal-close {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: var(--warm-orange);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 /* Footer */
 .footer-section {
   padding: var(--spacing-2xl) var(--spacing-md);
