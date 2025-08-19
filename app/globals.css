@@ -94,11 +94,36 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 80%, rgba(167, 201, 87, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(168, 218, 220, 0.1) 0%, transparent 50%);
   pointer-events: none;
   z-index: -1;
+}
+
+.app-container::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.8) 0%, transparent 40%),
+    radial-gradient(1.5px 1.5px at 60% 80%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
+    radial-gradient(1px 1px at 25% 60%, rgba(255, 255, 255, 0.5) 0%, transparent 40%),
+    radial-gradient(1.8px 1.8px at 80% 20%, rgba(255, 255, 255, 0.7) 0%, transparent 40%);
+  background-repeat: repeat;
+  background-size: 800px 800px;
+  animation: twinkle 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -2;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* Header Styles */
@@ -123,12 +148,25 @@ body {
   font-family: var(--font-display);
   font-size: 2.5rem;
   font-weight: 600;
-  color: var(--forest-green);
   margin-bottom: var(--spacing-xs);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
+}
+
+.title-text {
+  background: linear-gradient(90deg, var(--sun-yellow), var(--warm-orange), var(--sun-yellow));
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  animation: shine 8s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
 }
 
 .leaf-icon {
@@ -146,6 +184,131 @@ body {
 /* Main Content */
 .main-content {
   position: relative;
+}
+
+/* Globe Page Enhancements */
+.globe-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sun-yellow) 0%, var(--warm-orange) 40%, transparent 70%);
+  box-shadow: 0 0 8px rgba(241, 196, 15, 0.8), 0 0 16px rgba(231, 111, 81, 0.6);
+  animation: pulse 2s infinite;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.globe-marker:hover {
+  transform: scale(1.3);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(0.8);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.globe-hero {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--warm-white);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  animation: heroFade 6s ease forwards;
+}
+
+.globe-hero-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.globe-hero-text {
+  font-size: 1.2rem;
+}
+
+@keyframes heroFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(1.1);
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fadeIn var(--transition-medium);
+}
+
+.modal-content {
+  background: white;
+  color: #111;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: min(90vw, 560px);
+  padding: 24px;
+  animation: slideUp var(--transition-medium);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.modal-close {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .page-container {

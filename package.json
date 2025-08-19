@@ -1,6 +1,7 @@
 {
-  "name": "solarpunk-photo-comparison",
+  "name": "solar-explorer",
   "version": "0.1.0",
+  "description": "Solar Explorer - an interactive app for checking how various places would look like when through mastering material science and sustainable energy we entered solarpunk.",
   "private": true,
   "scripts": {
     "dev": "next dev",
