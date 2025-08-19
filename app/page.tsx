@@ -30,7 +30,7 @@ export default function Home() {
         lat: 52.2297,
         lng: 21.0122,
         size: 0.35,
-        color: '#ff8c00',
+        color: '#ff8800',
         beforeImage: { src: '/images/urban/pawia.webp', alt: 'Warsaw today', label: 'Today' },
         afterImage: { src: '/images/urban/pawia-punk.webp', alt: 'Warsaw solarpunk', label: 'Solarpunk' },
       },
@@ -39,7 +39,7 @@ export default function Home() {
         lat: 36.1147,
         lng: -115.1728,
         size: 0.35,
-        color: '#ff8c00',
+        color: '#ff8800',
         beforeImage: { src: '/images/urban/bellagio.png', alt: 'Las Vegas strip', label: 'Today' },
         afterImage: { src: '/images/urban/bellagio2.png', alt: 'Las Vegas strip solarpunk', label: 'Solarpunk' },
       },
@@ -48,7 +48,7 @@ export default function Home() {
         lat: 36.1699,
         lng: -115.1398,
         size: 0.35,
-        color: '#ff8c00',
+        color: '#ff8800',
         beforeImage: { src: '/images/urban/vegas1.jpg', alt: 'Las Vegas downtown', label: 'Today' },
         afterImage: { src: '/images/urban/vegas2.png', alt: 'Las Vegas downtown solarpunk', label: 'Solarpunk' },
       },
@@ -57,7 +57,7 @@ export default function Home() {
         lat: 48.8566,
         lng: 2.3522,
         size: 0.35,
-        color: '#ff8c00',
+        color: '#ff8800',
         beforeImage: { src: '/images/urban/eifel.webp', alt: 'Paris today', label: 'Today' },
         afterImage: { src: '/images/urban/eifel2.png', alt: 'Paris solarpunk', label: 'Solarpunk' },
       },
@@ -107,7 +107,7 @@ export default function Home() {
     let animationFrameId = 0
     let cloudsMesh: THREE.Mesh | null = null
     const CLOUDS_IMG_URL = '/fair_clouds_4k.png'
-    const CLOUDS_ALT = 0.004
+    const CLOUDS_ALT = 0.01
     const CLOUDS_ROTATION_SPEED = -0.006 // deg/frame
 
     const initClouds = () => {
@@ -165,11 +165,19 @@ export default function Home() {
               backgroundColor="rgba(0, 0, 0, 0)"
               globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
               bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
-              pointsData={locations}
-              pointAltitude={() => 0.12}
-              pointColor={(p: any) => (p as LocationPoint).color || '#ff8c00'}
-              pointRadius={(p: any) => (p as LocationPoint).size || 0.3}
-              onPointClick={(p) => setSelectedLocation(p as LocationPoint)}
+              htmlElementsData={locations}
+              htmlLat={(p: any) => (p as LocationPoint).lat}
+              htmlLng={(p: any) => (p as LocationPoint).lng}
+              htmlAltitude={() => 0}
+              htmlElement={(p: any) => {
+                const el = document.createElement('div')
+                const color = (p as LocationPoint).color || '#ff8800'
+                el.className = 'globe-marker'
+                el.innerHTML = `<div class="pulse-dot" style="--dot-color:${color}"></div><div class="label">${(p as LocationPoint).name}</div>`
+                el.style.pointerEvents = 'auto'
+                el.onclick = () => setSelectedLocation(p as LocationPoint)
+                return el
+              }}
             />
           </Suspense>
         )}
@@ -191,10 +199,12 @@ export default function Home() {
           <div
             onClick={stopPropagation}
             style={{
-              background: 'white',
-              color: '#111',
-              borderRadius: 12,
-              boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+              background: 'rgba(255,255,255,0.25)',
+              color: '#e0f7ff',
+              borderRadius: 16,
+              boxShadow: '0 10px 40px rgba(255,136,0,0.2)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255,255,255,0.3)',
               width: 'min(90vw, 560px)',
               padding: 24,
             }}
@@ -209,6 +219,7 @@ export default function Home() {
                   fontSize: 22,
                   lineHeight: 1,
                   cursor: 'pointer',
+                  color: '#fff',
                 }}
                 aria-label="Close"
               >
