@@ -14,7 +14,7 @@ interface ImageComparisonProps {
 }
 
 export default function ImageComparison({ beforeImage, afterImage }: ImageComparisonProps) {
-  const [sliderPosition, setSliderPosition] = useState(50)
+  const [sliderPosition, setSliderPosition] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isBeforeDone, setIsBeforeDone] = useState(false)
@@ -23,6 +23,7 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   const containerRef = useRef<HTMLDivElement>(null)
   const beforeImageRef = useRef<HTMLImageElement>(null)
   const afterImageRef = useRef<HTMLImageElement>(null)
+  const autoSlideRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const calculateDimensions = useCallback((img: HTMLImageElement) => {
     const imageAspectRatio = img.naturalWidth / img.naturalHeight
@@ -39,12 +40,21 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   }, [])
 
   // Pointer events (mouse + touch) to avoid passive event issues
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    setIsDragging(true)
-    const target = e.currentTarget as HTMLElement
-    try { target.setPointerCapture(e.pointerId) } catch {}
-    handleMove(e.clientX)
-  }, [handleMove])
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      if (autoSlideRef.current) {
+        clearTimeout(autoSlideRef.current)
+        autoSlideRef.current = null
+      }
+      setIsDragging(true)
+      const target = e.currentTarget as HTMLElement
+      try {
+        target.setPointerCapture(e.pointerId)
+      } catch {}
+      handleMove(e.clientX)
+    },
+    [handleMove]
+  )
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (!isDragging) return
@@ -77,8 +87,6 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     preloadImage.onload = () => {
       if (!aspectRatio && containerRef.current) {
         const imageAspectRatio = preloadImage.naturalWidth / preloadImage.naturalHeight
-        // Optional: debug (can remove)
-        console.log(`Image dimensions: ${preloadImage.naturalWidth}x${preloadImage.naturalHeight}, aspect ratio: ${imageAspectRatio.toFixed(2)}`)
         setAspectRatio(imageAspectRatio)
       }
     }
@@ -89,8 +97,7 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   useEffect(() => {}, [])
 
   useEffect(() => {
-    // Reveal as soon as either image is ready
-    if (isBeforeDone || isAfterDone) {
+    if (isBeforeDone && isAfterDone) {
       setIsLoaded(true)
     }
   }, [isBeforeDone, isAfterDone])
@@ -113,6 +120,25 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     const fallback = setTimeout(() => setIsLoaded(true), 1200)
     return () => clearTimeout(fallback)
   }, [calculateDimensions, aspectRatio])
+
+  useEffect(() => {
+    setIsBeforeDone(false)
+    setIsAfterDone(false)
+    setIsLoaded(false)
+    setAspectRatio(null)
+    setSliderPosition(0)
+  }, [beforeImage.src, afterImage.src])
+
+  useEffect(() => {
+    if (!isLoaded) return
+    autoSlideRef.current = setTimeout(() => setSliderPosition(100), 300)
+    return () => {
+      if (autoSlideRef.current) {
+        clearTimeout(autoSlideRef.current)
+        autoSlideRef.current = null
+      }
+    }
+  }, [isLoaded, beforeImage.src, afterImage.src])
 
   // No resize handler necessary with CSS aspect-ratio
 
@@ -182,9 +208,10 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
       {!isLoaded && (
         <div className="loading-overlay">
           <div className="loading-spinner">
-            <div className="spinner-leaf">🌿</div>
+            <div className="dot"></div>
+            <div className="dot"></div>
+            <div className="dot"></div>
           </div>
-          <p>Growing your comparison...</p>
         </div>
       )}
 

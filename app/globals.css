@@ -344,6 +344,7 @@ body {
 
 .after-image {
   z-index: 2;
+  transition: clip-path 12s ease-in-out;
 }
 
 .before-image {
@@ -365,8 +366,7 @@ body {
 }
 
 .before-label {
-  left: var(--spacing-md);
-  background: rgba(214, 40, 40, 0.9);
+  right: var(--spacing-md);
 }
 
 .after-label {
@@ -383,6 +383,7 @@ body {
   z-index: 10;
   transform: translateX(-2px);
   pointer-events: none;
+  transition: left 12s ease-in-out;
 }
 
 .handle-line {
@@ -407,11 +408,22 @@ body {
   box-shadow: var(--shadow-medium);
   border: 3px solid white;
   transition: all var(--transition-fast);
+  animation: slider-pulse 4s ease-in-out infinite;
 }
 
 .image-comparison-container:hover .handle-circle {
   transform: translate(-50%, -50%) scale(1.1);
   background: var(--moss-green);
+  animation: none;
+}
+
+.image-comparison-container.dragging .handle-circle {
+  animation: none;
+}
+
+.image-comparison-container.dragging .after-image,
+.image-comparison-container.dragging .slider-handle {
+  transition: none;
 }
 
 .handle-icon {
@@ -447,18 +459,24 @@ body {
 }
 
 .loading-spinner {
-  margin-bottom: var(--spacing-md);
+  display: flex;
+  gap: 8px;
 }
 
-.spinner-leaf {
-  font-size: 3rem;
-  animation: spin-grow 2s ease-in-out infinite;
+.loading-spinner .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--moss-green);
+  animation: dot-bounce 1.4s infinite both;
 }
 
-.loading-overlay p {
-  color: var(--moss-green);
-  font-size: 1.1rem;
-  font-weight: 500;
+.loading-spinner .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-spinner .dot:nth-child(3) {
+  animation-delay: 0.4s;
 }
 
 /* Interaction Hint */
@@ -476,13 +494,17 @@ body {
   align-items: center;
   gap: var(--spacing-xs);
   backdrop-filter: blur(10px);
-  opacity: 0;
+  opacity: 1;
   transition: opacity var(--transition-medium);
   z-index: 5;
 }
 
 .image-comparison-container:hover .interaction-hint {
-  opacity: 1;
+  opacity: 0;
+}
+
+.image-comparison-container.dragging .interaction-hint {
+  opacity: 0;
 }
 
 .hint-arrow {
@@ -528,12 +550,21 @@ body {
   }
 }
 
-@keyframes spin-grow {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
+@keyframes slider-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
   }
-  50% { 
-    transform: scale(1.2) rotate(180deg); 
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+@keyframes dot-bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
   }
 }
 
