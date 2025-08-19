@@ -34,163 +34,71 @@ export default function Home() {
     label: 'Solarpunk',
   }
 
+  const cityImages: Record<string, { before: string; after?: string }> = {
+    'new york, usa': {
+      before: '/images/urban/newyork1.jpg',
+      after: '/images/urban/newyork2.jpg',
+    },
+    'paris, france': {
+      before: '/images/urban/paris1.webp',
+      after: '/images/urban/paris2.png',
+    },
+    'london, uk': {
+      before: '/images/urban/london1.jpeg',
+    },
+    'shanghai, china': {
+      before: '/images/urban/shanghai-rails1.jpg',
+      after: '/images/urban/shanghai-rails2.png',
+    },
+    'tokyo, japan': { before: '/images/urban/tokyo1.jpg' },
+    'singapore, singapore': { before: '/images/urban/singapore1.jpg' },
+    'são paulo, brazil': { before: '/images/urban/saopaulo1.jpeg' },
+    'mexico city, mexico': { before: '/images/urban/mexico1.jpeg' },
+    'istanbul, turkey': { before: '/images/urban/istanbul1.jpeg' },
+    'saint petersburg, russia': { before: '/images/urban/saintpetersburg1.jpg' },
+    'warsaw, poland': { before: '/images/urban/warsaw1.jpeg' },
+    'new delhi, india': { before: '/images/urban/newdelhi1.jpg' },
+    'seoul, south korea': { before: '/images/urban/seoul1.jpg' },
+    'sydney, australia': { before: '/images/urban/sydney1.jpeg' },
+    'buenos aires, argentina': { before: '/images/urban/buenosaires1.jpg' },
+    'lisbon, portugal': { before: '/images/urban/lisbon1.jpg' },
+  }
+
+  const baseLocations: Omit<LocationPoint, 'beforeImage' | 'afterImage'>[] = [
+    { name: 'New York, USA', lat: 40.7128, lng: -74.006, size: 0.35, color: '#ffa500' },
+    { name: 'Paris, France', lat: 48.8566, lng: 2.3522, size: 0.35, color: '#ffa500' },
+    { name: 'London, UK', lat: 51.5074, lng: -0.1278, size: 0.35, color: '#ffa500' },
+    { name: 'Shanghai, China', lat: 31.2304, lng: 121.4737, size: 0.35, color: '#ffa500' },
+    { name: 'Tokyo, Japan', lat: 35.6762, lng: 139.6503, size: 0.35, color: '#ffa500' },
+    { name: 'Singapore, Singapore', lat: 1.3521, lng: 103.8198, size: 0.35, color: '#ffa500' },
+    { name: 'São Paulo, Brazil', lat: -23.5505, lng: -46.6333, size: 0.35, color: '#ffa500' },
+    { name: 'Mexico City, Mexico', lat: 19.4326, lng: -99.1332, size: 0.35, color: '#ffa500' },
+    { name: 'Istanbul, Turkey', lat: 41.0082, lng: 28.9784, size: 0.35, color: '#ffa500' },
+    { name: 'Saint Petersburg, Russia', lat: 59.9311, lng: 30.3609, size: 0.35, color: '#ffa500' },
+    { name: 'Dubai, United Arab Emirates', lat: 25.2048, lng: 55.2708, size: 0.35, color: '#ffa500' },
+    { name: 'Warsaw, Poland', lat: 52.2297, lng: 21.0122, size: 0.35, color: '#ffa500' },
+    { name: 'New Delhi, India', lat: 28.6139, lng: 77.209, size: 0.35, color: '#ffa500' },
+    { name: 'Seoul, South Korea', lat: 37.5665, lng: 126.978, size: 0.35, color: '#ffa500' },
+    { name: 'Sydney, Australia', lat: -33.8688, lng: 151.2093, size: 0.35, color: '#ffa500' },
+    { name: 'Buenos Aires, Argentina', lat: -34.6037, lng: -58.3816, size: 0.35, color: '#ffa500' },
+    { name: 'Lisbon, Portugal', lat: 38.7223, lng: -9.1393, size: 0.35, color: '#ffa500' },
+  ]
+
   const locations: LocationPoint[] = useMemo(
-    () => [
-      {
-        name: 'New York, USA',
-        lat: 40.7128,
-        lng: -74.006,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Paris, France',
-        lat: 48.8566,
-        lng: 2.3522,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'London, UK',
-        lat: 51.5074,
-        lng: -0.1278,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Shanghai, China',
-        lat: 31.2304,
-        lng: 121.4737,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Tokyo, Japan',
-        lat: 35.6762,
-        lng: 139.6503,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Singapore, Singapore',
-        lat: 1.3521,
-        lng: 103.8198,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'São Paulo, Brazil',
-        lat: -23.5505,
-        lng: -46.6333,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Mexico City, Mexico',
-        lat: 19.4326,
-        lng: -99.1332,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Istanbul, Turkey',
-        lat: 41.0082,
-        lng: 28.9784,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Saint Petersburg, Russia',
-        lat: 59.9311,
-        lng: 30.3609,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Dubai, United Arab Emirates',
-        lat: 25.2048,
-        lng: 55.2708,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Warsaw, Poland',
-        lat: 52.2297,
-        lng: 21.0122,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'New Delhi, India',
-        lat: 28.6139,
-        lng: 77.209,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Seoul, South Korea',
-        lat: 37.5665,
-        lng: 126.978,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Sydney, Australia',
-        lat: -33.8688,
-        lng: 151.2093,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Buenos Aires, Argentina',
-        lat: -34.6037,
-        lng: -58.3816,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
-        name: 'Lisbon, Portugal',
-        lat: 38.7223,
-        lng: -9.1393,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-    ],
-    []
+    () =>
+      baseLocations.map((loc) => {
+        const images = cityImages[loc.name.toLowerCase()]
+        return {
+          ...loc,
+          beforeImage: images?.before
+            ? { src: images.before, alt: `Current view of ${loc.name}`, label: 'Today' }
+            : placeholderBefore,
+          afterImage: images?.after
+            ? { src: images.after, alt: `Solarpunk vision for ${loc.name}`, label: 'Solarpunk' }
+            : placeholderAfter,
+        }
+      }),
+    [placeholderBefore, placeholderAfter]
   )
 
   const selectedLocation =

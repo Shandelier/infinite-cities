@@ -14,7 +14,7 @@ interface ImageComparisonProps {
 }
 
 export default function ImageComparison({ beforeImage, afterImage }: ImageComparisonProps) {
-  const [sliderPosition, setSliderPosition] = useState(50)
+  const [sliderPosition, setSliderPosition] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isBeforeDone, setIsBeforeDone] = useState(false)
@@ -23,6 +23,7 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   const containerRef = useRef<HTMLDivElement>(null)
   const beforeImageRef = useRef<HTMLImageElement>(null)
   const afterImageRef = useRef<HTMLImageElement>(null)
+  const animationRef = useRef<number | null>(null)
 
   const calculateDimensions = useCallback((img: HTMLImageElement) => {
     const imageAspectRatio = img.naturalWidth / img.naturalHeight
@@ -40,6 +41,10 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
 
   // Pointer events (mouse + touch) to avoid passive event issues
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current)
+      animationRef.current = null
+    }
     setIsDragging(true)
     const target = e.currentTarget as HTMLElement
     try { target.setPointerCapture(e.pointerId) } catch {}
@@ -113,6 +118,36 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     const fallback = setTimeout(() => setIsLoaded(true), 1200)
     return () => clearTimeout(fallback)
   }, [calculateDimensions, aspectRatio])
+
+  useEffect(() => {
+    // Reset when images change
+    setSliderPosition(0)
+    setIsBeforeDone(false)
+    setIsAfterDone(false)
+    setIsLoaded(false)
+    setAspectRatio(null)
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current)
+      animationRef.current = null
+    }
+  }, [beforeImage.src, afterImage.src])
+
+  useEffect(() => {
+    if (!isLoaded) return
+    const duration = 2000
+    const start = performance.now()
+    const animate = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1)
+      setSliderPosition(progress * 100)
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate)
+      }
+    }
+    animationRef.current = requestAnimationFrame(animate)
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current)
+    }
+  }, [isLoaded])
 
   // No resize handler necessary with CSS aspect-ratio
 
