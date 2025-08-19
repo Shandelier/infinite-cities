@@ -21,10 +21,10 @@
   --clay-red: #d62828;
   
   /* Neutral Tones */
-  --cream: #fefae0;
-  --warm-white: #faf8f5;
-  --soft-gray: #f4f3ee;
-  --charcoal: #264653;
+  --cream: #1e1e1e;
+  --warm-white: #1a1a1a;
+  --soft-gray: #2a2a2a;
+  --charcoal: #e0e0e0;
   --deep-forest: #1a3a1f;
   
   /* Gradients */
@@ -69,8 +69,8 @@ html {
 
 body {
   font-family: var(--font-primary);
-  background: var(--warm-white);
-  color: var(--charcoal);
+  background: #1a1a1a;
+  color: #e0e0e0;
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -80,11 +80,15 @@ body {
   min-height: 100vh;
   background: linear-gradient(
     180deg,
-    var(--warm-white) 0%,
-    var(--soft-gray) 50%,
-    var(--cream) 100%
+    #1a1a1a 0%,
+    #2a2a2a 50%,
+    #1e1e1e 100%
   );
   position: relative;
+}
+
+.site-header {
+  background: rgba(26, 26, 26, 0.9);
 }
 
 .app-container::before {
@@ -248,12 +252,12 @@ body {
 
 .comparison-item {
   margin-bottom: var(--spacing-2xl);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(42, 42, 42, 0.8);
   border-radius: var(--radius-organic);
   padding: var(--spacing-xl);
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(5px);
-  border: 1px solid rgba(167, 201, 87, 0.2);
+  border: 1px solid rgba(167, 201, 87, 0.3);
   position: relative;
   overflow: hidden;
   transition: all var(--transition-medium);
@@ -690,29 +694,3 @@ body {
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --warm-white: #1a1a1a;
-    --soft-gray: #2a2a2a;
-    --cream: #1e1e1e;
-    --charcoal: #e0e0e0;
-  }
-  
-  .app-container {
-    background: linear-gradient(
-      180deg,
-      #1a1a1a 0%,
-      #2a2a2a 50%,
-      #1e1e1e 100%
-    );
-  }
-  
-  .comparison-item {
-    background: rgba(42, 42, 42, 0.8);
-    border-color: rgba(167, 201, 87, 0.3);
-  }
-  
-  .site-header {
-    background: rgba(26, 26, 26, 0.9);
-  }
-}

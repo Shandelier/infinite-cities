@@ -141,6 +141,7 @@ export default function Home() {
     selectedIndex !== null ? locations[selectedIndex] : null
 
   const isDesktop = viewport.width >= 1024
+  const isLargeDesktop = viewport.width >= 1600
   const globeWidth = viewport.width
 
   const handlePrev = () => {
@@ -268,14 +269,14 @@ export default function Home() {
   const cardContent = selectedLocation ? (
     <div
       style={{
-        background: 'rgba(255,255,255,0.35)',
-        color: '#264653',
+        background: 'rgba(20,40,60,0.8)',
+        color: '#a8dadc',
         borderRadius: 20,
-        boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255,255,255,0.4)',
-        width: isDesktop ? '600px' : 'min(90vw, 700px)',
-        maxWidth: isDesktop ? 600 : undefined,
+        boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(168,218,220,0.4)',
+        width: isDesktop ? (isLargeDesktop ? '750px' : '600px') : 'min(90vw, 700px)',
+        maxWidth: isDesktop ? (isLargeDesktop ? 750 : 600) : undefined,
         padding: 32,
       }}
     >
@@ -296,7 +297,7 @@ export default function Home() {
             fontSize: 26,
             lineHeight: 1,
             cursor: 'pointer',
-            color: '#264653',
+            color: '#a8dadc',
           }}
           aria-label="Close"
         >
@@ -308,23 +309,23 @@ export default function Home() {
         afterImage={selectedLocation.afterImage}
       />
       <div style={{ marginTop: 24 }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            color: '#264653',
-          }}
-        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              color: '#a8dadc',
+            }}
+          >
           <button
             onClick={handlePrev}
             style={{
               border: 'none',
               background: 'transparent',
-              color: '#264653',
-              fontSize: 28,
-              cursor: 'pointer',
-            }}
+            color: '#a8dadc',
+            fontSize: 28,
+            cursor: 'pointer',
+          }}
             aria-label="Previous city"
           >
             ←
@@ -335,10 +336,10 @@ export default function Home() {
             style={{
               border: 'none',
               background: 'transparent',
-              color: '#264653',
-              fontSize: 28,
-              cursor: 'pointer',
-            }}
+            color: '#a8dadc',
+            fontSize: 28,
+            cursor: 'pointer',
+          }}
             aria-label="Next city"
           >
             →
@@ -362,8 +363,8 @@ export default function Home() {
                 margin: '0 4px',
                 background:
                   idx === selectedIndex
-                    ? '#264653'
-                    : 'rgba(38,70,83,0.3)',
+                    ? '#a8dadc'
+                    : 'rgba(168,218,220,0.3)',
                 cursor: 'pointer',
               }}
             />
@@ -387,7 +388,12 @@ export default function Home() {
           width: '100%',
           height: '100%',
           transition: 'transform 0.6s ease',
-          transform: isDesktop && selectedLocation ? 'translateX(20%)' : 'none',
+          transform:
+            isDesktop && selectedLocation
+              ? isLargeDesktop
+                ? 'translateX(10%)'
+                : 'translateX(20%)'
+              : 'none',
         }}
       >
         {isMounted && (
@@ -423,8 +429,10 @@ export default function Home() {
           style={{
             position: 'absolute',
             top: '50%',
-            left: '5%',
-            transform: 'translateY(-50%)',
+            left: isLargeDesktop ? '50%' : '5%',
+            transform: isLargeDesktop
+              ? 'translate(-50%, -50%)'
+              : 'translateY(-50%)',
             zIndex: 10,
           }}
         >
