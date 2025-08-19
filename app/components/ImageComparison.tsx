@@ -14,7 +14,7 @@ interface ImageComparisonProps {
 }
 
 export default function ImageComparison({ beforeImage, afterImage }: ImageComparisonProps) {
-  const [sliderPosition, setSliderPosition] = useState(50)
+  const [sliderPosition, setSliderPosition] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isBeforeDone, setIsBeforeDone] = useState(false)
@@ -77,8 +77,6 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     preloadImage.onload = () => {
       if (!aspectRatio && containerRef.current) {
         const imageAspectRatio = preloadImage.naturalWidth / preloadImage.naturalHeight
-        // Optional: debug (can remove)
-        console.log(`Image dimensions: ${preloadImage.naturalWidth}x${preloadImage.naturalHeight}, aspect ratio: ${imageAspectRatio.toFixed(2)}`)
         setAspectRatio(imageAspectRatio)
       }
     }
@@ -89,8 +87,7 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   useEffect(() => {}, [])
 
   useEffect(() => {
-    // Reveal as soon as either image is ready
-    if (isBeforeDone || isAfterDone) {
+    if (isBeforeDone && isAfterDone) {
       setIsLoaded(true)
     }
   }, [isBeforeDone, isAfterDone])
@@ -113,6 +110,22 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     const fallback = setTimeout(() => setIsLoaded(true), 1200)
     return () => clearTimeout(fallback)
   }, [calculateDimensions, aspectRatio])
+
+  useEffect(() => {
+    setIsBeforeDone(false)
+    setIsAfterDone(false)
+    setIsLoaded(false)
+    setAspectRatio(null)
+    setSliderPosition(0)
+  }, [beforeImage.src, afterImage.src])
+
+  useEffect(() => {
+    if (isLoaded) {
+      setSliderPosition(0)
+      const timer = setTimeout(() => setSliderPosition(100), 500)
+      return () => clearTimeout(timer)
+    }
+  }, [isLoaded])
 
   // No resize handler necessary with CSS aspect-ratio
 
@@ -182,9 +195,10 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
       {!isLoaded && (
         <div className="loading-overlay">
           <div className="loading-spinner">
-            <div className="spinner-leaf">🌿</div>
+            <div className="spinner-dot" />
+            <div className="spinner-dot" />
+            <div className="spinner-dot" />
           </div>
-          <p>Growing your comparison...</p>
         </div>
       )}
 
