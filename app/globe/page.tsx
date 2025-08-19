@@ -1,10 +1,10 @@
 'use client'
 
-import dynamic from 'next/dynamic'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
+import type { GlobeMethods } from 'react-globe.gl'
 
-const Globe = dynamic(() => import('react-globe.gl'), { ssr: false })
+const Globe = React.lazy(() => import('react-globe.gl'))
 
 interface WarsawPoint {
   lat: number
@@ -15,7 +15,7 @@ interface WarsawPoint {
 }
 
 export default function GlobePage() {
-  const globeRef = useRef<any>(null)
+  const globeRef = useRef<GlobeMethods | undefined>(undefined)
   const [isMounted, setIsMounted] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [viewport, setViewport] = useState<{ width: number; height: number }>({ width: 0, height: 0 })
@@ -40,47 +40,71 @@ export default function GlobePage() {
   }, [])
 
   useEffect(() => {
-    if (!isMounted || !globeRef.current) return
-    globeRef.current.pointOfView({ lat: 30, lng: 10, altitude: 2.2 }, 1500)
-    // Enable a gentle auto-rotation
-    const controls = globeRef.current.controls()
-    if (controls) {
-      controls.autoRotate = true
-      controls.autoRotateSpeed = 0.35
+    if (!isMounted) return
+    let canceled = false
+    const tryInit = () => {
+      if (canceled) return
+      const globe = globeRef.current
+      if (!globe) {
+        requestAnimationFrame(tryInit)
+        return
+      }
+      globe.pointOfView({ lat: 30, lng: 10, altitude: 2.2 }, 1500)
+      const controls = globe.controls()
+      if (controls) {
+        controls.autoRotate = true
+        controls.autoRotateSpeed = 0.35
+      }
+    }
+    tryInit()
+    return () => {
+      canceled = true
     }
   }, [isMounted])
 
   // Add semi-transparent clouds layer
   useEffect(() => {
-    if (!isMounted || !globeRef.current) return
-    const globe = globeRef.current
-    const CLOUDS_IMG_URL = 'https://unpkg.com/three-globe/example/img/clouds.png'
+    if (!isMounted) return
+    let canceled = false
+    let animationFrameId = 0
+    let cloudsMesh: THREE.Mesh | null = null
+    const CLOUDS_IMG_URL = '/fair_clouds_4k.png'
     const CLOUDS_ALT = 0.004
     const CLOUDS_ROTATION_SPEED = -0.006 // deg/frame
 
-    let animationFrameId = 0
-    let cloudsMesh: THREE.Mesh | null = null
-
-    const loader = new THREE.TextureLoader()
-    loader.load(CLOUDS_IMG_URL, (cloudsTexture) => {
-      cloudsMesh = new THREE.Mesh(
-        new THREE.SphereGeometry(globe.getGlobeRadius() * (1 + CLOUDS_ALT), 75, 75),
-        new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
-      )
-      globe.scene().add(cloudsMesh)
-
-      const rotateClouds = () => {
-        if (cloudsMesh) {
-          cloudsMesh.rotation.y += (CLOUDS_ROTATION_SPEED * Math.PI) / 180
-        }
-        animationFrameId = requestAnimationFrame(rotateClouds)
+    const initClouds = () => {
+      if (canceled) return
+      const globe = globeRef.current
+      if (!globe) {
+        requestAnimationFrame(initClouds)
+        return
       }
-      rotateClouds()
-    })
+      const loader = new THREE.TextureLoader()
+      loader.load(CLOUDS_IMG_URL, (cloudsTexture) => {
+        cloudsTexture.colorSpace = THREE.SRGBColorSpace
+        cloudsMesh = new THREE.Mesh(
+          new THREE.SphereGeometry(globe.getGlobeRadius() * (1 + CLOUDS_ALT), 75, 75),
+          new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true, depthWrite: false })
+        )
+        globe.scene().add(cloudsMesh)
+
+        const rotateClouds = () => {
+          if (canceled) return
+          if (cloudsMesh) {
+            cloudsMesh.rotation.y += (CLOUDS_ROTATION_SPEED * Math.PI) / 180
+          }
+          animationFrameId = requestAnimationFrame(rotateClouds)
+        }
+        rotateClouds()
+      })
+    }
+    initClouds()
 
     return () => {
+      canceled = true
       if (animationFrameId) cancelAnimationFrame(animationFrameId)
-      if (cloudsMesh) {
+      const globe = globeRef.current
+      if (cloudsMesh && globe) {
         try {
           globe.scene().remove(cloudsMesh)
         } catch {}
@@ -95,19 +119,21 @@ export default function GlobePage() {
     <div style={{ position: 'relative' }}>
       <div style={{ width: '100%', height: viewport.height }}>
         {isMounted && (
-          <Globe
-            ref={globeRef}
-            width={viewport.width}
-            height={viewport.height}
-            backgroundColor="rgba(0, 0, 0, 0)"
-            globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-            bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
-            pointsData={pointsData}
-            pointAltitude={(p) => ((p as WarsawPoint).name === 'Warsaw' ? 0.12 : 0.05)}
-            pointColor={(p) => (p as WarsawPoint).color || '#ff8c00'}
-            pointRadius={(p) => (p as WarsawPoint).size || 0.3}
-            onPointClick={() => setIsModalOpen(true)}
-          />
+          <Suspense fallback={null}>
+            <Globe
+              ref={globeRef}
+              width={viewport.width}
+              height={viewport.height}
+              backgroundColor="rgba(0, 0, 0, 0)"
+              globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+              bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
+              pointsData={pointsData}
+              pointAltitude={(p: any) => ((p as WarsawPoint).name === 'Warsaw' ? 0.12 : 0.05)}
+              pointColor={(p: any) => (p as WarsawPoint).color || '#ff8c00'}
+              pointRadius={(p: any) => (p as WarsawPoint).size || 0.3}
+              onPointClick={() => setIsModalOpen(true)}
+            />
+          </Suspense>
         )}
       </div>
 
