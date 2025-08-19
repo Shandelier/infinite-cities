@@ -141,6 +141,7 @@ export default function Home() {
     selectedIndex !== null ? locations[selectedIndex] : null
 
   const isDesktop = viewport.width >= 1024
+  const isLargeDesktop = viewport.width >= 1800
   const globeWidth = viewport.width
 
   const handlePrev = () => {
@@ -268,14 +269,14 @@ export default function Home() {
   const cardContent = selectedLocation ? (
     <div
       style={{
-        background: 'rgba(255,255,255,0.35)',
-        color: '#264653',
+        background: 'rgba(16, 42, 67, 0.85)',
+        color: '#e0f0ff',
         borderRadius: 20,
-        boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255,255,255,0.4)',
-        width: isDesktop ? '600px' : 'min(90vw, 700px)',
-        maxWidth: isDesktop ? 600 : undefined,
+        boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(80,150,200,0.4)',
+        width: isDesktop ? (isLargeDesktop ? '800px' : '600px') : 'min(90vw, 700px)',
+        maxWidth: isDesktop ? (isLargeDesktop ? 800 : 600) : undefined,
         padding: 32,
       }}
     >
@@ -296,7 +297,7 @@ export default function Home() {
             fontSize: 26,
             lineHeight: 1,
             cursor: 'pointer',
-            color: '#264653',
+            color: '#e0f0ff',
           }}
           aria-label="Close"
         >
@@ -313,7 +314,7 @@ export default function Home() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            color: '#264653',
+            color: '#e0f0ff',
           }}
         >
           <button
@@ -321,7 +322,7 @@ export default function Home() {
             style={{
               border: 'none',
               background: 'transparent',
-              color: '#264653',
+              color: '#e0f0ff',
               fontSize: 28,
               cursor: 'pointer',
             }}
@@ -335,7 +336,7 @@ export default function Home() {
             style={{
               border: 'none',
               background: 'transparent',
-              color: '#264653',
+              color: '#e0f0ff',
               fontSize: 28,
               cursor: 'pointer',
             }}
@@ -362,8 +363,8 @@ export default function Home() {
                 margin: '0 4px',
                 background:
                   idx === selectedIndex
-                    ? '#264653'
-                    : 'rgba(38,70,83,0.3)',
+                    ? '#e0f0ff'
+                    : 'rgba(224,240,255,0.3)',
                 cursor: 'pointer',
               }}
             />
@@ -387,7 +388,12 @@ export default function Home() {
           width: '100%',
           height: '100%',
           transition: 'transform 0.6s ease',
-          transform: isDesktop && selectedLocation ? 'translateX(20%)' : 'none',
+          transform:
+            isDesktop && selectedLocation
+              ? isLargeDesktop
+                ? 'translateX(10%)'
+                : 'translateX(20%)'
+              : 'none',
         }}
       >
         {isMounted && (
@@ -423,7 +429,7 @@ export default function Home() {
           style={{
             position: 'absolute',
             top: '50%',
-            left: '5%',
+            left: isLargeDesktop ? '20%' : '5%',
             transform: 'translateY(-50%)',
             zIndex: 10,
           }}
