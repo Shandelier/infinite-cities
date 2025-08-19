@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import NextImage from 'next/image'
 
 interface ImageData {
   src: string
@@ -162,13 +163,15 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     >
       {/* Before Image */}
       <div className="image-wrapper before-image">
-        <img
+        <NextImage
           ref={beforeImageRef}
           src={beforeImage.src}
           alt={beforeImage.alt}
           onLoad={markBeforeDone}
           onError={markBeforeDone}
-          loading="eager"
+          fill
+          sizes="(max-width: 1920px) 100vw, 1920px"
+          priority
           draggable={false}
         />
         <div className="image-label before-label">
@@ -181,13 +184,15 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
         className="image-wrapper after-image"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       >
-        <img
+        <NextImage
           ref={afterImageRef}
           src={afterImage.src}
           alt={afterImage.alt}
           onLoad={markAfterDone}
           onError={markAfterDone}
-          loading="eager"
+          fill
+          sizes="(max-width: 1920px) 100vw, 1920px"
+          priority
           draggable={false}
         />
         <div className="image-label after-label">
