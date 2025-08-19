@@ -658,6 +658,160 @@ body {
   }
 }
 
+/* Title Card Styles */
+.title-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  opacity: 0;
+  transition: all var(--transition-slow);
+  pointer-events: none;
+}
+
+.title-card.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.title-card-content {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  text-align: center;
+  min-width: 400px;
+  max-width: 90vw;
+}
+
+.title-card-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.4) 20%, 
+    rgba(255, 255, 255, 0.6) 50%, 
+    rgba(255, 255, 255, 0.4) 80%, 
+    transparent 100%);
+}
+
+.title-card-content::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.2) 20%, 
+    rgba(255, 255, 255, 0.3) 50%, 
+    rgba(255, 255, 255, 0.2) 80%, 
+    transparent 100%);
+}
+
+.main-title {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 var(--spacing-sm) 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.02em;
+}
+
+.main-subtitle {
+  font-family: var(--font-primary);
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 var(--spacing-lg) 0;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.title-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.decoration-line {
+  height: 1px;
+  width: 60px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.5) 50%, 
+    transparent 100%);
+}
+
+.decoration-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  animation: gentle-glow 3s ease-in-out infinite;
+}
+
+@keyframes gentle-glow {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Responsive title card */
+@media (max-width: 768px) {
+  .title-card-content {
+    min-width: 320px;
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+  
+  .main-title {
+    font-size: 2.8rem;
+  }
+  
+  .main-subtitle {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-card-content {
+    min-width: 280px;
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+  
+  .main-title {
+    font-size: 2.2rem;
+  }
+  
+  .main-subtitle {
+    font-size: 1rem;
+  }
+  
+  .decoration-line {
+    width: 40px;
+  }
+}
+
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   :root {

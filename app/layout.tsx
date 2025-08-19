@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Solar Explorer',
-  description: 'Interactive globe and photo comparisons exploring a solarpunk future',
-  keywords: 'solarpunk, photo comparison, sustainability, eco-friendly, nature, globe',
+  title: 'Infinite Cities',
+  description: 'Interactive globe and photo comparisons exploring urban futures',
+  keywords: 'urban planning, photo comparison, city futures, sustainability, architecture, globe',
 }
 
 export default function RootLayout({

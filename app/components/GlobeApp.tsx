@@ -4,6 +4,7 @@ import React, { Suspense, useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import type { GlobeMethods } from 'react-globe.gl'
 import ImageComparison from './ImageComparison'
+import TitleCard from './TitleCard'
 
 const Globe = React.lazy(() => import('react-globe.gl'))
 
@@ -344,6 +345,9 @@ export default function GlobeApp({ locations }: GlobeAppProps) {
           <div onClick={stopPropagation}>{cardContent}</div>
         </div>
       )}
+      
+      {/* Title Card - shown when no location is selected */}
+      {!selectedLocation && <TitleCard />}
     </div>
   )
 }
