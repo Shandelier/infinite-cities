@@ -365,8 +365,7 @@ body {
 }
 
 .before-label {
-  left: var(--spacing-md);
-  background: rgba(214, 40, 40, 0.9);
+  right: var(--spacing-md);
 }
 
 .after-label {
@@ -407,11 +406,17 @@ body {
   box-shadow: var(--shadow-medium);
   border: 3px solid white;
   transition: all var(--transition-fast);
+  animation: slider-pulse 4s ease-in-out infinite;
 }
 
 .image-comparison-container:hover .handle-circle {
   transform: translate(-50%, -50%) scale(1.1);
   background: var(--moss-green);
+  animation: none;
+}
+
+.image-comparison-container.dragging .handle-circle {
+  animation: none;
 }
 
 .handle-icon {
@@ -439,7 +444,6 @@ body {
   bottom: 0;
   background: var(--warm-white);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 20;
@@ -447,18 +451,24 @@ body {
 }
 
 .loading-spinner {
-  margin-bottom: var(--spacing-md);
+  display: flex;
+  gap: 8px;
 }
 
-.spinner-leaf {
-  font-size: 3rem;
-  animation: spin-grow 2s ease-in-out infinite;
+.spinner-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--moss-green);
+  animation: dot-pulse 1s ease-in-out infinite;
 }
 
-.loading-overlay p {
-  color: var(--moss-green);
-  font-size: 1.1rem;
-  font-weight: 500;
+.spinner-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.spinner-dot:nth-child(3) {
+  animation-delay: 0.4s;
 }
 
 /* Interaction Hint */
@@ -476,13 +486,24 @@ body {
   align-items: center;
   gap: var(--spacing-xs);
   backdrop-filter: blur(10px);
-  opacity: 0;
+  opacity: 1;
   transition: opacity var(--transition-medium);
   z-index: 5;
 }
 
 .image-comparison-container:hover .interaction-hint {
-  opacity: 1;
+  opacity: 0;
+}
+
+@keyframes dot-pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
 }
 
 .hint-arrow {
@@ -529,11 +550,20 @@ body {
 }
 
 @keyframes spin-grow {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
   }
-  50% { 
-    transform: scale(1.2) rotate(180deg); 
+  50% {
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+@keyframes slider-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
   }
 }
 
