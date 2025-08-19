@@ -10,7 +10,6 @@ const Globe = React.lazy(() => import('react-globe.gl'))
 interface LocationPoint {
   lat: number
   lng: number
-  size?: number
   color?: string
   name: string
   beforeImage: { src: string; alt: string; label: string }
@@ -29,7 +28,6 @@ export default function Home() {
         name: 'Warsaw',
         lat: 52.2297,
         lng: 21.0122,
-        size: 0.35,
         color: '#ff8c00',
         beforeImage: { src: '/images/urban/pawia.webp', alt: 'Warsaw today', label: 'Today' },
         afterImage: { src: '/images/urban/pawia-punk.webp', alt: 'Warsaw solarpunk', label: 'Solarpunk' },
@@ -38,7 +36,6 @@ export default function Home() {
         name: 'Las Vegas - Strip',
         lat: 36.1147,
         lng: -115.1728,
-        size: 0.35,
         color: '#ff8c00',
         beforeImage: { src: '/images/urban/bellagio.png', alt: 'Las Vegas strip', label: 'Today' },
         afterImage: { src: '/images/urban/bellagio2.png', alt: 'Las Vegas strip solarpunk', label: 'Solarpunk' },
@@ -47,7 +44,6 @@ export default function Home() {
         name: 'Las Vegas - Downtown',
         lat: 36.1699,
         lng: -115.1398,
-        size: 0.35,
         color: '#ff8c00',
         beforeImage: { src: '/images/urban/vegas1.jpg', alt: 'Las Vegas downtown', label: 'Today' },
         afterImage: { src: '/images/urban/vegas2.png', alt: 'Las Vegas downtown solarpunk', label: 'Solarpunk' },
@@ -56,7 +52,6 @@ export default function Home() {
         name: 'Paris',
         lat: 48.8566,
         lng: 2.3522,
-        size: 0.35,
         color: '#ff8c00',
         beforeImage: { src: '/images/urban/eifel.webp', alt: 'Paris today', label: 'Today' },
         afterImage: { src: '/images/urban/eifel2.png', alt: 'Paris solarpunk', label: 'Solarpunk' },
@@ -165,11 +160,25 @@ export default function Home() {
               backgroundColor="rgba(0, 0, 0, 0)"
               globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
               bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
-              pointsData={locations}
-              pointAltitude={() => 0.12}
-              pointColor={(p: any) => (p as LocationPoint).color || '#ff8c00'}
-              pointRadius={(p: any) => (p as LocationPoint).size || 0.3}
-              onPointClick={(p) => setSelectedLocation(p as LocationPoint)}
+              htmlElementsData={locations}
+              htmlLat={(d: any) => (d as LocationPoint).lat}
+              htmlLng={(d: any) => (d as LocationPoint).lng}
+              htmlAltitude={0.02}
+              htmlElement={(d: any) => {
+                const loc = d as LocationPoint
+                const el = document.createElement('div')
+                el.className = 'marker'
+                const dot = document.createElement('div')
+                dot.className = 'marker-dot'
+                dot.style.setProperty('--marker-color', loc.color || '#ff8c00')
+                const label = document.createElement('div')
+                label.className = 'marker-label'
+                label.textContent = loc.name
+                el.appendChild(dot)
+                el.appendChild(label)
+                el.addEventListener('click', () => setSelectedLocation(loc))
+                return el
+              }}
             />
           </Suspense>
         )}
