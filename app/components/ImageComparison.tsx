@@ -14,11 +14,12 @@ interface ImageComparisonProps {
 }
 
 export default function ImageComparison({ beforeImage, afterImage }: ImageComparisonProps) {
-  const [sliderPosition, setSliderPosition] = useState(50)
+  const [sliderPosition, setSliderPosition] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isBeforeDone, setIsBeforeDone] = useState(false)
   const [isAfterDone, setIsAfterDone] = useState(false)
+  const [hasAnimated, setHasAnimated] = useState(false)
   const [aspectRatio, setAspectRatio] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const beforeImageRef = useRef<HTMLImageElement>(null)
@@ -77,8 +78,6 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     preloadImage.onload = () => {
       if (!aspectRatio && containerRef.current) {
         const imageAspectRatio = preloadImage.naturalWidth / preloadImage.naturalHeight
-        // Optional: debug (can remove)
-        console.log(`Image dimensions: ${preloadImage.naturalWidth}x${preloadImage.naturalHeight}, aspect ratio: ${imageAspectRatio.toFixed(2)}`)
         setAspectRatio(imageAspectRatio)
       }
     }
@@ -89,11 +88,27 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   useEffect(() => {}, [])
 
   useEffect(() => {
-    // Reveal as soon as either image is ready
-    if (isBeforeDone || isAfterDone) {
+    if (isBeforeDone && isAfterDone) {
       setIsLoaded(true)
     }
   }, [isBeforeDone, isAfterDone])
+
+  useEffect(() => {
+    if (!isLoaded || isDragging || hasAnimated) return
+    let frame: number
+    const start = performance.now()
+    const duration = 8000
+    const animate = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1)
+      setSliderPosition(progress * 100)
+      if (progress < 1 && !isDragging) {
+        frame = requestAnimationFrame(animate)
+      }
+    }
+    frame = requestAnimationFrame(animate)
+    setHasAnimated(true)
+    return () => cancelAnimationFrame(frame)
+  }, [isLoaded, isDragging, hasAnimated, beforeImage.src, afterImage.src])
 
   // Handle cached images and provide a short fallback timeout
   useEffect(() => {
@@ -113,6 +128,15 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     const fallback = setTimeout(() => setIsLoaded(true), 1200)
     return () => clearTimeout(fallback)
   }, [calculateDimensions, aspectRatio])
+
+  useEffect(() => {
+    setIsBeforeDone(false)
+    setIsAfterDone(false)
+    setIsLoaded(false)
+    setAspectRatio(null)
+    setSliderPosition(0)
+    setHasAnimated(false)
+  }, [beforeImage.src, afterImage.src])
 
   // No resize handler necessary with CSS aspect-ratio
 
@@ -182,9 +206,10 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
       {!isLoaded && (
         <div className="loading-overlay">
           <div className="loading-spinner">
-            <div className="spinner-leaf">🌿</div>
+            <div className="dot" />
+            <div className="dot" />
+            <div className="dot" />
           </div>
-          <p>Growing your comparison...</p>
         </div>
       )}
 
