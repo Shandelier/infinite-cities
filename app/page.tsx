@@ -64,15 +64,6 @@ export default function Home() {
         afterImage: placeholderAfter,
       },
       {
-        name: 'Barcelona, Spain',
-        lat: 41.3851,
-        lng: 2.1734,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
         name: 'Shanghai, China',
         lat: 31.2304,
         lng: 121.4737,
@@ -145,15 +136,6 @@ export default function Home() {
         afterImage: placeholderAfter,
       },
       {
-        name: 'Rome, Italy',
-        lat: 41.9028,
-        lng: 12.4964,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
-      {
         name: 'Warsaw, Poland',
         lat: 52.2297,
         lng: 21.0122,
@@ -207,21 +189,15 @@ export default function Home() {
         beforeImage: placeholderBefore,
         afterImage: placeholderAfter,
       },
-      {
-        name: 'Zurich, Switzerland',
-        lat: 47.3769,
-        lng: 8.5417,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: placeholderBefore,
-        afterImage: placeholderAfter,
-      },
     ],
     []
   )
 
   const selectedLocation =
     selectedIndex !== null ? locations[selectedIndex] : null
+
+  const isDesktop = viewport.width >= 1024
+  const globeWidth = viewport.width
 
   const handlePrev = () => {
     if (selectedIndex === null) return
@@ -237,7 +213,7 @@ export default function Home() {
     setIsMounted(true)
     const computeViewport = () => {
       const width = typeof window !== 'undefined' ? window.innerWidth : 800
-      const height = typeof window !== 'undefined' ? Math.round(window.innerHeight * 0.7) : 600
+      const height = typeof window !== 'undefined' ? window.innerHeight : 600
       setViewport({ width, height })
     }
     computeViewport()
@@ -255,7 +231,7 @@ export default function Home() {
         requestAnimationFrame(tryInit)
         return
       }
-      globe.pointOfView({ lat: 30, lng: 10, altitude: 2.2 }, 1500)
+      globe.pointOfView({ lat: 30, lng: 10, altitude: 1.8 }, 1500)
       const controls = globe.controls()
       if (controls) {
         controls.autoRotate = true
@@ -267,6 +243,24 @@ export default function Home() {
       canceled = true
     }
   }, [isMounted])
+
+  useEffect(() => {
+    if (!isMounted) return
+    const globe = globeRef.current
+    const controls = globe?.controls()
+    if (!globe || !controls) return
+    if (selectedLocation) {
+      controls.autoRotate = false
+      globe.pointOfView(
+        { lat: selectedLocation.lat, lng: selectedLocation.lng, altitude: 1.2 },
+        1000
+      )
+    } else {
+      controls.autoRotate = true
+      controls.autoRotateSpeed = 0.35
+      globe.pointOfView({ lat: 30, lng: 10, altitude: 1.8 }, 1000)
+    }
+  }, [selectedLocation, isMounted])
 
   // Add semi-transparent clouds layer
   useEffect(() => {
@@ -321,37 +315,161 @@ export default function Home() {
   const handleBackgroundClick = () => setSelectedIndex(null)
   const stopPropagation: React.MouseEventHandler<HTMLDivElement> = (e) => e.stopPropagation()
 
-  return (
-    <div style={{ position: 'relative' }}>
-      <div style={{ width: '100%', height: viewport.height }}>
-        {isMounted && (
-          <Suspense fallback={null}>
-            <Globe
-              ref={globeRef}
-              width={viewport.width}
-              height={viewport.height}
-              backgroundColor="rgba(0, 0, 0, 0)"
-              globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-              bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
-              htmlElementsData={locations}
-              htmlLat={(p: any) => (p as LocationPoint).lat}
-              htmlLng={(p: any) => (p as LocationPoint).lng}
-              htmlAltitude={() => 0.01}
-                htmlElement={(p: any) => {
-                  const el = document.createElement('div')
-                  const color = (p as LocationPoint).color || '#ffa500'
-                  el.className = 'globe-marker'
-                  el.innerHTML = `<div class="pulse-dot" style="--dot-color:${color}"></div><div class="label">${(p as LocationPoint).name}</div>`
-                  el.style.pointerEvents = 'auto'
-                  el.onclick = () => setSelectedIndex(locations.indexOf(p as LocationPoint))
-                  return el
-                }}
-              />
-            </Suspense>
-          )}
+  const cardContent = selectedLocation ? (
+    <div
+      style={{
+        background: 'rgba(255,255,255,0.35)',
+        color: '#264653',
+        borderRadius: 20,
+        boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+        backdropFilter: 'blur(12px)',
+        border: '1px solid rgba(255,255,255,0.4)',
+        width: 'min(90vw, 800px)',
+        maxWidth: 800,
+        padding: isDesktop ? 40 : 32,
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 16,
+        }}
+      >
+        <h2 style={{ fontSize: 28, margin: 0 }}>{selectedLocation.name}</h2>
+        <button
+          onClick={() => setSelectedIndex(null)}
+          style={{
+            border: 'none',
+            background: 'transparent',
+            fontSize: 26,
+            lineHeight: 1,
+            cursor: 'pointer',
+            color: '#264653',
+          }}
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </div>
+      <ImageComparison
+        beforeImage={selectedLocation.beforeImage}
+        afterImage={selectedLocation.afterImage}
+      />
+      <div style={{ marginTop: 24 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            color: '#264653',
+          }}
+        >
+          <button
+            onClick={handlePrev}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              color: '#264653',
+              fontSize: 28,
+              cursor: 'pointer',
+            }}
+            aria-label="Previous city"
+          >
+            ←
+          </button>
+          <div style={{ flex: 1, textAlign: 'center' }}>{selectedLocation.name}</div>
+          <button
+            onClick={handleNext}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              color: '#264653',
+              fontSize: 28,
+              cursor: 'pointer',
+            }}
+            aria-label="Next city"
+          >
+            →
+          </button>
         </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: 12,
+          }}
+        >
+          {locations.map((_, idx) => (
+            <span
+              key={idx}
+              onClick={() => setSelectedIndex(idx)}
+              style={{
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                margin: '0 4px',
+                background:
+                  idx === selectedIndex
+                    ? '#264653'
+                    : 'rgba(38,70,83,0.3)',
+                cursor: 'pointer',
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  ) : null
 
-      {selectedLocation && (
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: viewport.height,
+      }}
+    >
+      {isMounted && (
+        <Suspense fallback={null}>
+          <Globe
+            ref={globeRef}
+            width={globeWidth}
+            height={viewport.height}
+            backgroundColor="rgba(0, 0, 0, 0)"
+            globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+            bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
+            htmlElementsData={locations}
+            htmlLat={(p: any) => (p as LocationPoint).lat}
+            htmlLng={(p: any) => (p as LocationPoint).lng}
+            htmlAltitude={() => 0.01}
+            htmlElement={(p: any) => {
+              const el = document.createElement('div')
+              const color = (p as LocationPoint).color || '#ffa500'
+              el.className = 'globe-marker'
+              el.innerHTML = `<div class="pulse-dot" style="--dot-color:${color}"></div><div class="label">${(p as LocationPoint).name}</div>`
+              el.style.pointerEvents = 'auto'
+              el.onclick = () => setSelectedIndex(locations.indexOf(p as LocationPoint))
+              return el
+            }}
+          />
+        </Suspense>
+      )}
+      {isDesktop && selectedLocation && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 10,
+          }}
+        >
+          {cardContent}
+        </div>
+      )}
+      {!isDesktop && selectedLocation && (
         <div
           onClick={handleBackgroundClick}
           style={{
@@ -364,104 +482,10 @@ export default function Home() {
             zIndex: 50,
           }}
         >
-          <div
-            onClick={stopPropagation}
-            style={{
-              background: 'rgba(255,255,255,0.25)',
-              color: '#e0f7ff',
-              borderRadius: 16,
-              boxShadow: '0 10px 40px rgba(0,255,242,0.2)',
-              backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(255,255,255,0.3)',
-                width: 'min(90vw, 700px)',
-                padding: 24,
-              }}
-            >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <h2 style={{ fontSize: 20, margin: 0 }}>{selectedLocation.name}</h2>
-                <button
-                  onClick={() => setSelectedIndex(null)}
-                  style={{
-                    border: 'none',
-                    background: 'transparent',
-                    fontSize: 22,
-                    lineHeight: 1,
-                  cursor: 'pointer',
-                  color: '#fff',
-                }}
-                aria-label="Close"
-              >
-                ×
-              </button>
-            </div>
-              <ImageComparison
-                beforeImage={selectedLocation.beforeImage}
-                afterImage={selectedLocation.afterImage}
-              />
-              <div style={{ marginTop: 16 }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    color: '#fff',
-                  }}
-                >
-                  <button
-                    onClick={handlePrev}
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      color: '#fff',
-                      fontSize: 24,
-                      cursor: 'pointer',
-                    }}
-                    aria-label="Previous city"
-                  >
-                    ←
-                  </button>
-                  <div style={{ flex: 1, textAlign: 'center' }}>{selectedLocation.name}</div>
-                  <button
-                    onClick={handleNext}
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      color: '#fff',
-                      fontSize: 24,
-                      cursor: 'pointer',
-                    }}
-                    aria-label="Next city"
-                  >
-                    →
-                  </button>
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    marginTop: 8,
-                  }}
-                >
-                  {locations.map((_, idx) => (
-                    <span
-                      key={idx}
-                      onClick={() => setSelectedIndex(idx)}
-                      style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        margin: '0 4px',
-                        background: idx === selectedIndex ? '#fff' : 'rgba(255,255,255,0.4)',
-                        cursor: 'pointer',
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
+          <div onClick={stopPropagation}>{cardContent}</div>
+        </div>
+      )}
+    </div>
+  )
+}
 
