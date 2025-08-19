@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import type { GlobeMethods } from 'react-globe.gl'
 import ImageComparison from './components/ImageComparison'
@@ -63,6 +63,18 @@ export default function Home() {
       },
     ],
     []
+  )
+
+  const renderMarker = useCallback(
+    (d: LocationPoint) => {
+      const el = document.createElement('div')
+      el.className = 'globe-pin'
+      el.innerHTML = `<div class="dot"></div><div class="label">${d.name}</div>`
+      el.style.pointerEvents = 'auto'
+      el.onclick = () => setSelectedLocation(d)
+      return el
+    },
+    [setSelectedLocation]
   )
 
   useEffect(() => {
@@ -165,11 +177,8 @@ export default function Home() {
               backgroundColor="rgba(0, 0, 0, 0)"
               globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
               bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
-              pointsData={locations}
-              pointAltitude={() => 0.12}
-              pointColor={(p: any) => (p as LocationPoint).color || '#ff8c00'}
-              pointRadius={(p: any) => (p as LocationPoint).size || 0.3}
-              onPointClick={(p) => setSelectedLocation(p as LocationPoint)}
+              htmlElementsData={locations}
+              htmlElement={renderMarker}
             />
           </Suspense>
         )}
