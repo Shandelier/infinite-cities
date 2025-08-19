@@ -1,9 +1,10 @@
-# Solarpunk Photo Comparison
+# Solar Explorer
 
-A beautiful, nature-inspired photo comparison website showcasing sustainable futures through interactive before/after image sliders.
+Solar Explorer is an interactive app for checking how various places could look when, through mastering material science and sustainable energy, we enter a solarpunk future. Compare before and after visions and browse locations on a 3D globe.
 
 ## Features
 
+- **Interactive Globe**: Spin the Earth and select marked locations
 - **Interactive Image Comparison**: Smooth horizontal slider to reveal before/after images
 - **Solarpunk Aesthetic**: Organic design elements with nature-inspired colors and textures  
 - **Responsive Design**: Works seamlessly across desktop and mobile devices
@@ -62,7 +63,8 @@ npm start
 │   │   └── ImageComparison.tsx    # Main comparison slider component
 │   ├── globals.css                # Global styles and solarpunk theme
 │   ├── layout.tsx                 # Root layout with header
-│   └── page.tsx                   # Main page with image feed
+│   ├── page.tsx                   # Globe home page
+│   └── photos/page.tsx            # Image comparison gallery
 ├── package.json
 ├── next.config.js
 └── tsconfig.json
@@ -72,7 +74,7 @@ npm start
 
 ### Adding New Image Comparisons
 
-Edit the `sampleImagePairs` array in `app/page.tsx`:
+Edit the `sampleImagePairs` array in `app/photos/page.tsx`:
 
 ```typescript
 const sampleImagePairs: ImagePair[] = [
