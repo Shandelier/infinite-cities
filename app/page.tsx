@@ -20,37 +20,30 @@ interface LocationPoint {
 export default function Home() {
   const globeRef = useRef<GlobeMethods | undefined>(undefined)
   const [isMounted, setIsMounted] = useState(false)
-  const [selectedLocation, setSelectedLocation] = useState<LocationPoint | null>(null)
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [viewport, setViewport] = useState<{ width: number; height: number }>({ width: 0, height: 0 })
+
+  const placeholderBefore = {
+    src: '/images/urban/pawia.webp',
+    alt: 'Placeholder today',
+    label: 'Today',
+  }
+  const placeholderAfter = {
+    src: '/images/urban/pawia-punk.webp',
+    alt: 'Placeholder solarpunk',
+    label: 'Solarpunk',
+  }
 
   const locations: LocationPoint[] = useMemo(
     () => [
       {
-        name: 'Warsaw',
-        lat: 52.2297,
-        lng: 21.0122,
+        name: 'New York',
+        lat: 40.7128,
+        lng: -74.006,
         size: 0.35,
         color: '#ffa500',
-        beforeImage: { src: '/images/urban/pawia.webp', alt: 'Warsaw today', label: 'Today' },
-        afterImage: { src: '/images/urban/pawia-punk.webp', alt: 'Warsaw solarpunk', label: 'Solarpunk' },
-      },
-      {
-        name: 'Las Vegas - Strip',
-        lat: 36.1147,
-        lng: -115.1728,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: { src: '/images/urban/bellagio.png', alt: 'Las Vegas strip', label: 'Today' },
-        afterImage: { src: '/images/urban/bellagio2.png', alt: 'Las Vegas strip solarpunk', label: 'Solarpunk' },
-      },
-      {
-        name: 'Las Vegas - Downtown',
-        lat: 36.1699,
-        lng: -115.1398,
-        size: 0.35,
-        color: '#ffa500',
-        beforeImage: { src: '/images/urban/vegas1.jpg', alt: 'Las Vegas downtown', label: 'Today' },
-        afterImage: { src: '/images/urban/vegas2.png', alt: 'Las Vegas downtown solarpunk', label: 'Solarpunk' },
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
       },
       {
         name: 'Paris',
@@ -58,12 +51,183 @@ export default function Home() {
         lng: 2.3522,
         size: 0.35,
         color: '#ffa500',
-        beforeImage: { src: '/images/urban/eifel.webp', alt: 'Paris today', label: 'Today' },
-        afterImage: { src: '/images/urban/eifel2.png', alt: 'Paris solarpunk', label: 'Solarpunk' },
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'London',
+        lat: 51.5074,
+        lng: -0.1278,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Barcelona',
+        lat: 41.3851,
+        lng: 2.1734,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Shanghai',
+        lat: 31.2304,
+        lng: 121.4737,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Tokyo',
+        lat: 35.6762,
+        lng: 139.6503,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Singapore',
+        lat: 1.3521,
+        lng: 103.8198,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'São Paulo',
+        lat: -23.5505,
+        lng: -46.6333,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Mexico City',
+        lat: 19.4326,
+        lng: -99.1332,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Istanbul',
+        lat: 41.0082,
+        lng: 28.9784,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Saint Petersburg',
+        lat: 59.9343,
+        lng: 30.3351,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Dubai',
+        lat: 25.2048,
+        lng: 55.2708,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Rome',
+        lat: 41.9028,
+        lng: 12.4964,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Warsaw',
+        lat: 52.2297,
+        lng: 21.0122,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'New Delhi',
+        lat: 28.6139,
+        lng: 77.209,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Seoul',
+        lat: 37.5665,
+        lng: 126.978,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Sydney',
+        lat: -33.8688,
+        lng: 151.2093,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Buenos Aires',
+        lat: -34.6037,
+        lng: -58.3816,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Lisbon',
+        lat: 38.7223,
+        lng: -9.1393,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
+      },
+      {
+        name: 'Zurich',
+        lat: 47.3769,
+        lng: 8.5417,
+        size: 0.35,
+        color: '#ffa500',
+        beforeImage: placeholderBefore,
+        afterImage: placeholderAfter,
       },
     ],
     []
   )
+
+  const selectedLocation =
+    selectedIndex !== null ? locations[selectedIndex] : null
+  const prevIndex =
+    selectedIndex === null
+      ? 0
+      : (selectedIndex - 1 + locations.length) % locations.length
+  const nextIndex =
+    selectedIndex === null ? 0 : (selectedIndex + 1) % locations.length
 
   useEffect(() => {
     setIsMounted(true)
@@ -150,7 +314,7 @@ export default function Home() {
     }
   }, [isMounted])
 
-  const handleBackgroundClick = () => setSelectedLocation(null)
+  const handleBackgroundClick = () => setSelectedIndex(null)
   const stopPropagation: React.MouseEventHandler<HTMLDivElement> = (e) => e.stopPropagation()
 
   return (
@@ -175,7 +339,8 @@ export default function Home() {
                 el.className = 'globe-marker'
                 el.innerHTML = `<div class="pulse-dot" style="--dot-color:${color}"></div><div class="label">${(p as LocationPoint).name}</div>`
                 el.style.pointerEvents = 'auto'
-                el.onclick = () => setSelectedLocation(p as LocationPoint)
+                el.onclick = () =>
+                  setSelectedIndex(locations.indexOf(p as LocationPoint))
                 return el
               }}
             />
@@ -205,14 +370,21 @@ export default function Home() {
               boxShadow: '0 10px 40px rgba(0,255,242,0.2)',
               backdropFilter: 'blur(12px)',
               border: '1px solid rgba(255,255,255,0.3)',
-              width: 'min(90vw, 560px)',
+              width: 'min(90vw, 640px)',
               padding: 24,
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 12,
+              }}
+            >
               <h2 style={{ fontSize: 20, margin: 0 }}>{selectedLocation.name}</h2>
               <button
-                onClick={() => setSelectedLocation(null)}
+                onClick={() => setSelectedIndex(null)}
                 style={{
                   border: 'none',
                   background: 'transparent',
@@ -230,6 +402,55 @@ export default function Home() {
               beforeImage={selectedLocation.beforeImage}
               afterImage={selectedLocation.afterImage}
             />
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: 16,
+              }}
+            >
+              <button
+                onClick={() => setSelectedIndex(prevIndex)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#fff',
+                  cursor: 'pointer',
+                }}
+              >
+                ← {locations[prevIndex].name}
+              </button>
+              <div style={{ display: 'flex', gap: 6 }}>
+                {locations.map((_, idx) => (
+                  <span
+                    key={idx}
+                    onClick={() => setSelectedIndex(idx)}
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      background:
+                        idx === selectedIndex
+                          ? '#fff'
+                          : 'rgba(255,255,255,0.4)',
+                      cursor: 'pointer',
+                    }}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={() => setSelectedIndex(nextIndex)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#fff',
+                  cursor: 'pointer',
+                }}
+              >
+                {locations[nextIndex].name} →
+              </button>
+            </div>
           </div>
         </div>
       )}
