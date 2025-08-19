@@ -2,9 +2,33 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Infinite Cities',
-  description: 'Interactive globe and photo comparisons exploring urban futures',
-  keywords: 'urban planning, photo comparison, city futures, sustainability, architecture, globe',
+  title: 'Solar Explorer',
+  description: 'Interactive globe and photo comparisons exploring a solarpunk future',
+  keywords: 'urban planning, photo comparison, city futures, sustainability, architecture, globe, solarpunk',
+  openGraph: {
+    url: 'https://infinite-cities.netlify.app/',
+    type: 'website',
+    title: 'Solar Explorer',
+    description: 'Interactive globe and photo comparisons exploring a solarpunk future',
+    images: [
+      {
+        url: 'https://opengraph.b-cdn.net/production/images/f3c8cb5b-524a-4d8a-ae5a-0ca8d52faf7a.jpg?token=tvxTUtUhaPrk79j5-0nRyEv6yxG3NfdB2FYeFXz1MGk&height=630&width=1200&expires=33291637696',
+        width: 1200,
+        height: 630,
+        alt: 'Solar Explorer - Interactive globe and photo comparisons exploring a solarpunk future',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@infinite-cities',
+    creator: '@infinite-cities',
+    title: 'Solar Explorer',
+    description: 'Interactive globe and photo comparisons exploring a solarpunk future',
+    images: [
+      'https://opengraph.b-cdn.net/production/images/f3c8cb5b-524a-4d8a-ae5a-0ca8d52faf7a.jpg?token=tvxTUtUhaPrk79j5-0nRyEv6yxG3NfdB2FYeFXz1MGk&height=630&width=1200&expires=33291637696',
+    ],
+  },
 }
 
 export default function RootLayout({
