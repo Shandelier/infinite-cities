@@ -14,7 +14,7 @@ interface ImageComparisonProps {
 }
 
 export default function ImageComparison({ beforeImage, afterImage }: ImageComparisonProps) {
-  const [sliderPosition, setSliderPosition] = useState(50)
+  const [sliderPosition, setSliderPosition] = useState(10)
   const [isDragging, setIsDragging] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isBeforeDone, setIsBeforeDone] = useState(false)
@@ -89,8 +89,7 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
   useEffect(() => {}, [])
 
   useEffect(() => {
-    // Reveal as soon as either image is ready
-    if (isBeforeDone || isAfterDone) {
+    if (isBeforeDone && isAfterDone) {
       setIsLoaded(true)
     }
   }, [isBeforeDone, isAfterDone])
@@ -113,6 +112,14 @@ export default function ImageComparison({ beforeImage, afterImage }: ImageCompar
     const fallback = setTimeout(() => setIsLoaded(true), 1200)
     return () => clearTimeout(fallback)
   }, [calculateDimensions, aspectRatio])
+
+  useEffect(() => {
+    setIsBeforeDone(false)
+    setIsAfterDone(false)
+    setIsLoaded(false)
+    setAspectRatio(null)
+    setSliderPosition(10)
+  }, [beforeImage.src, afterImage.src])
 
   // No resize handler necessary with CSS aspect-ratio
 

@@ -365,8 +365,7 @@ body {
 }
 
 .before-label {
-  left: var(--spacing-md);
-  background: rgba(214, 40, 40, 0.9);
+  right: var(--spacing-md);
 }
 
 .after-label {
@@ -407,11 +406,17 @@ body {
   box-shadow: var(--shadow-medium);
   border: 3px solid white;
   transition: all var(--transition-fast);
+  animation: slider-pulse 4s ease-in-out infinite;
 }
 
 .image-comparison-container:hover .handle-circle {
   transform: translate(-50%, -50%) scale(1.1);
   background: var(--moss-green);
+  animation: none;
+}
+
+.image-comparison-container.dragging .handle-circle {
+  animation: none;
 }
 
 .handle-icon {
@@ -529,11 +534,20 @@ body {
 }
 
 @keyframes spin-grow {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
   }
-  50% { 
-    transform: scale(1.2) rotate(180deg); 
+  50% {
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+@keyframes slider-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
   }
 }
 
