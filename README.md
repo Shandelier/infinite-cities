@@ -1,4 +1,4 @@
-# Solar Explorer
+# Infinite Cities
 
 Solar Explorer is an interactive app for checking how various places would look when, through mastering material science and sustainable energy, we enter a solarpunk future. It showcases transformations through an interactive globe and before/after image sliders.
 
