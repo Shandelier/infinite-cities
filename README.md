@@ -2,6 +2,11 @@
 
 Solar Explorer is an interactive app for checking how various places would look when, through mastering material science and sustainable energy, we enter a solarpunk future. It showcases transformations through an interactive globe and before/after image sliders.
 
+https://infinite-cities.netlify.app/
+
+<img width="1312" height="1247" alt="image" src="https://github.com/user-attachments/assets/eca3e4d0-12c6-49e0-ac88-b8613e5c20e2" />
+
+
 ## Features
 
 - **Interactive Image Comparison**: Smooth horizontal slider to reveal before/after images
